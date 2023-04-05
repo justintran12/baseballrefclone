@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Baseball Reference Clone</title>
+<meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
+<h1>Jarred Kelenic</h1>
+</head>
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<table id = 'statsTable'>
+	<tr>
+		<th>Year</th>
+		<th>GP</th>
+		<th>PA</th>
+		<th>AB</th>
+		<th>BB</th>
+		<th>Hits</th>
+		<th>2B</th>
+		<th>3B</th>
+		<th>HR</th>
+		<th>AVG</th>
+		<th>OBP</th>
+		<th>SLG</th>
+		<th>OPS</th>
+		<th>RBI</th>
+		<th>Runs</th>
+		<th>SO</th>
+		<th>SB</th>
+		<th>BABIP</th>
+		<th>HBP</th>
+	</tr>
+</table>
+<script>
+function dataToHTML (map, year) {
+	const GP = map.get("gamesPlayed");
+	const PA = map.get("plateAppearances");
+	const AB = map.get("atBats");
+	const BB = map.get("baseOnBalls");
+	const Hits = map.get("hits");
+	const Doubles = map.get("doubles");
+	const Triples = map.get("triples");
+	const HR = map.get("homeRuns");
+	const AVG = map.get("avg");
+	const OBP = map.get("obp");
+	const SLG = map.get("slg");
+	const OPS = map.get("ops");
+	const RBI = map.get("rbi");
+	const Runs = map.get("runs");
+	const SO = map.get("strikeOuts");
+	const SB = map.get("stolenBases");
+	const BABIP = map.get("babip");
+	const HBP = map.get("hitByPitch");
+	//const htmlDataStr = ("<tr> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> </tr>", GP, PA, AB, BB, Hits, Doubles, Triples, HR, AVG, OBP, SLG, OPS, RBI, Runs, SO, SB, BABIP, HBP);
+	const htmlDataStr = `<tr> <td> ${year} </td> <td> ${GP} </td> <td> ${PA} </td> <td> ${AB} </td> <td> ${BB} </td> <td> ${Hits} </td> <td> ${Doubles} </td> <td> ${Triples} </td> <td> ${HR} </td> <td> ${AVG} </td> <td> ${OBP} </td> <td> ${SLG} </td> <td> ${OPS} </td> <td> ${RBI} </td> <td> ${Runs} </td> <td> ${SO} </td> <td> ${SB} </td> <td> ${BABIP} </td> <td> ${HBP} </td> </tr>`;
+	return htmlDataStr;	
+}
+$.ajax({
+	type: 'get',
+	url: 'http://127.0.0.1:5000/career',
+	success: function (data) {
+		const data2 = JSON.stringify(data);
+		const map = new Map(Object.entries(JSON.parse(data2)));
+		statsTable = document.getElementById('statsTable');
+		statsTable.innerHTML += dataToHTML(map, 'Career');
+	},
+	error: function (error) {
+		console.log(`Error ${error}`);
+	}
+});
+$.ajax({
+	type: 'get',
+	url: 'http://127.0.0.1:5000/seasons',
+	success: function (data) {
+		const data2 = JSON.stringify(data);
+		const map = new Map(Object.entries(JSON.parse(data2)));
+		statsTable = document.getElementById('statsTable');
+		statsTable.innerHTML += dataToHTML(map, '2023');
+	},
+	error: function (error) {
+		console.log(`Error ${error}`);
+	}
+});
+</script>
+</body>
+</html>

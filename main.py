@@ -65,5 +65,16 @@ def execute_query(connection, query):
         print(f"Error: '{err}'")
 
 connection = create_server_connection("localhost", "root", "bayview12")
-create_database_query = "CREATE DATABASE BaseballWorld"
-create_database(connection, create_database_query )
+#create_database_query = "CREATE DATABASE BaseballWorld"
+#create_database(connection, create_database_query )
+
+create_player_table = """
+CREATE TABLE player (
+  player.id INT PRIMARY KEY,
+  player.name VARCHAR(255) NOT NULL,
+  number INT NOT NULL,
+  age INT NOT NULL,
+  
+  team.name VARCHAR(255)
+  );
+ """
