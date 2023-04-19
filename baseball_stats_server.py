@@ -39,7 +39,7 @@ def getDataSeasons():
 	player_id = 672284
 	player_stats = statsapi.player_stat_data(player_id, group="[hitting,fielding]", type="season", sportId=1)
 	
-	hitting_stats = player_stats['stats'][2]['stats']
+	hitting_stats = player_stats['stats'][0]['stats']
 		
 		
 	return jsonify(hitting_stats)
