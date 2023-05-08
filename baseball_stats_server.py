@@ -37,9 +37,14 @@ def getDataSeasons():
 	player = "Jarred Kelenic"
 	#player_id = statsapi.lookup_player(player)[0]['id']
 	player_id = 672284
-	player_stats = statsapi.player_stat_data(player_id, group="[hitting,fielding]", type="season", sportId=1)
+	player_info = statsapi.player_stat_data(player_id, group="[hitting,fielding]", type="season", sportId=1)
 	
-	hitting_stats = player_stats['stats'][0]['stats']
+	player_stats = player_info['stats']
+	hitting_stats = {}
+
+	for stat in player_stats:
+		if (stat["group"] == 'hitting'):
+			hitting_stats = stat["stats"]
 		
 		
 	return jsonify(hitting_stats)
