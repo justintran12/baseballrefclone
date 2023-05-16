@@ -25,38 +25,20 @@ def getPlayerHittingStatsToMap(player_name, season_type):
 	
 @app.route('/career', methods = ['GET'])
 def getDataCareer():
-	player = "Jarred Kelenic"
-	player_stats_map = getPlayerHittingStatsToMap(player, 'career')
-	
-	'''
-	@after_this_request
-	def add_header (response):
-		response.headers.add('Access-Control-Allow-Origin', '*')
-		return response
-	'''
+	player_user_input = request.values.get('player_name')
+	print(player_user_input)
+	player_stats_map = getPlayerHittingStatsToMap(player_user_input, 'career')
 		
 	return jsonify(player_stats_map)
 	
 @app.route('/seasons', methods = ['GET'])
 def getDataSeasons():
-	player = "Jarred Kelenic"
-	player_stats_map = getPlayerHittingStatsToMap(player, 'season')
-	'''
-	# another way to get player hitting stats for season but only works if you know player id
-	#player_id = statsapi.lookup_player(player)[0]['id']
-	player_id = 672284
-	player_info = statsapi.player_stat_data(player_id, group="[hitting,fielding]", type="season", sportId=1)
-	
-	player_stats = player_info['stats']
-	hitting_stats = {}
-
-	for stat in player_stats:
-		if (stat["group"] == 'hitting'):
-			hitting_stats = stat["stats"]
-	'''
-		
+	player_user_input = request.values.get('player_name')
+	print(player_user_input)
+	player_stats_map = getPlayerHittingStatsToMap(player_user_input, 'season')
 		
 	return jsonify(player_stats_map)
+
 
 if __name__ == '__main__':
    app.run(debug = True)
