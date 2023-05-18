@@ -4,13 +4,13 @@
 <title>Baseball Reference Clone</title>
 <meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
 <h1>Player Stats</h1>
+<p id="getDataResponse"></p>
 </head>
 <body>
 <div>
 	<label for="player_name">Enter Position Player Name:</label> <br>
 	<input type="text" id="player_name" name="player_name"> <br>
-	<button onclick = "getData()" > Submit </button>
-	<p id="getDataResponse"></p>
+	<button onclick = "getData('hitting')" > Submit </button> <br>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <table id = 'statsTable'>
@@ -38,6 +38,36 @@
 		</tr>
 	</thead>
 </table>
+<div>
+	<label for="pitcher_name">Enter Pitcher Name:</label> <br>
+	<input type="text" id="pitcher_name" name="pitcher_name"> <br>
+	<button onclick = "getData('pitching')" > Submit </button> <br>
+</div>
+<table id = 'pitcherStatsTable'>
+	<thead>
+		<tr>
+			<th>Year</th>
+			<th>Starts</th>
+			<th>GP</th>
+			<th>IP</th>
+			<th>W</th>
+			<th>L</th>
+			<th>ERA</th>
+			<th>Opp. Avg</th>
+			<th>WHIP</th>
+			<th>SO</th>
+			<th>BB</th>
+			<th>Hits</th>
+			<th>HR</th>
+			<th>Strike %</th>
+			<th>Saves</th>
+			<th>Save Opps</th>
+			<th>CG</th>
+			<th>Shut Outs</th>
+			<th>Wild Pitches</th>
+		</tr>
+	</thead>
+</table>
 <script>
 function dataToHTML (map, year) {
 	const GP = map.get("gamesPlayed");
@@ -62,20 +92,53 @@ function dataToHTML (map, year) {
 	const htmlDataStr = `<tr> <td> ${year} </td> <td> ${GP} </td> <td> ${PA} </td> <td> ${AB} </td> <td> ${BB} </td> <td> ${Hits} </td> <td> ${Doubles} </td> <td> ${Triples} </td> <td> ${HR} </td> <td> ${AVG} </td> <td> ${OBP} </td> <td> ${SLG} </td> <td> ${OPS} </td> <td> ${RBI} </td> <td> ${Runs} </td> <td> ${SO} </td> <td> ${SB} </td> <td> ${BABIP} </td> <td> ${HBP} </td> </tr>`;
 	return htmlDataStr;	
 }
-function getData() {
+function pitcherDataToHTML (map, year) {
+	const starts = map.get("gamesStarted")
+	const GP = map.get("gamesPlayed");
+	const IP = map.get("inningsPitched");
+	const W = map.get("wins");
+	const L = map.get("losses");
+	const ERA = map.get("era");
+	const oppAvg = map.get("avg");
+	const whip = map.get("whip");
+	const SO = map.get("strikeOuts");
+	const BB = map.get("baseOnBalls");
+	const hits = map.get("hits");
+	const HR = map.get("homeRuns");
+	const strikeP = map.get("strikePercentage");
+	const saves = map.get("saves");
+	const saveOpps = map.get("saveOpportunities");
+	const CG = map.get("completeGames");
+	const shutOuts = map.get("shutouts");
+	const wildPitches = map.get("wildPitches");
+	const htmlDataStr = `<tr> <td> ${year} </td> <td> ${starts} </td> <td> ${GP} </td> <td> ${IP} </td> <td> ${W} </td> <td> ${L} </td> <td> ${ERA} </td> <td> ${oppAvg} </td> <td> ${whip} </td> <td> ${SO} </td> <td> ${BB} </td> <td> ${hits} </td> <td> ${HR} </td> <td> ${strikeP} </td> <td> ${saves} </td> <td> ${saveOpps} </td> <td> ${CG} </td> <td> ${shutOuts} </td> <td> ${wildPitches} </td> </tr>`;
+	return htmlDataStr;	
+}
+function getData(player_type) {
 	$("#statsTable").find("tr:gt(0)").remove();
-	var playerNameInput = document.getElementById("player_name").value;
+	$("#pitcherStatsTable").find("tr:gt(0)").remove();
+	if (player_type == "hitting") {
+		var playerNameInput = document.getElementById("player_name").value;
+	} else {
+		var playerNameInput = document.getElementById("pitcher_name").value;
+	}
 	$.ajax({
 		type: 'get',
 		url: 'http://127.0.0.1:5000/career',
-		data: {'player_name':playerNameInput},
+		data: {'player_name':playerNameInput, 'player_type':player_type},
 		dataType: 'json',
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
-
-			statsTable = document.getElementById('statsTable');
-			statsTable.innerHTML += dataToHTML(map, 'Career');
+			
+			if (player_type == "hitting") {
+				statsTable = document.getElementById('statsTable');
+				statsTable.innerHTML += dataToHTML(map, 'Career');
+			} else {
+				statsTable = document.getElementById('pitcherStatsTable');
+				statsTable.innerHTML += pitcherDataToHTML(map, 'Career');
+			}
+			
 			document.getElementById("getDataResponse").innerHTML = "Success, found player!"
 		},
 		error: function (error) {
@@ -86,16 +149,25 @@ function getData() {
 	$.ajax({
 		type: 'get',
 		url: 'http://127.0.0.1:5000/seasons',
-		data: {'player_name':playerNameInput},
+		data: {'player_name':playerNameInput, 'player_type':player_type},
 		dataType: 'json',
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
 			
-			statsTable = document.getElementById('statsTable');
+			if (player_type == "hitting") {
+				statsTable = document.getElementById('statsTable');
+			} else {
+				statsTable = document.getElementById('pitcherStatsTable');
+			}
+
 			for (const key of map.keys()){
 				var value = new Map(Object.entries(map.get(key)));
-				statsTable.innerHTML += dataToHTML(value, key);
+				if (player_type == "hitting") {
+					statsTable.innerHTML += dataToHTML(value, key);
+				} else {
+					statsTable.innerHTML += pitcherDataToHTML(value, key);
+				}
 			}
 		},
 		error: function (error) {
