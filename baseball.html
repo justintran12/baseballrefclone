@@ -7,9 +7,10 @@
 </head>
 <body>
 <div>
-	<label for="player_name">Enter Player Name:</label> <br>
+	<label for="player_name">Enter Position Player Name:</label> <br>
 	<input type="text" id="player_name" name="player_name"> <br>
-	<button onclick = "getData()" > Click Me </button>
+	<button onclick = "getData()" > Submit </button>
+	<p id="getDataResponse"></p>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <table id = 'statsTable'>
@@ -62,6 +63,7 @@ function dataToHTML (map, year) {
 	return htmlDataStr;	
 }
 function getData() {
+	$("#statsTable").find("tr:gt(0)").remove();
 	var playerNameInput = document.getElementById("player_name").value;
 	$.ajax({
 		type: 'get',
@@ -71,10 +73,13 @@ function getData() {
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
+
 			statsTable = document.getElementById('statsTable');
 			statsTable.innerHTML += dataToHTML(map, 'Career');
+			document.getElementById("getDataResponse").innerHTML = "Success, found player!"
 		},
 		error: function (error) {
+			document.getElementById("getDataResponse").innerHTML = "Error player not found, player may be inactive or you misspelled the name"
 			console.log(`Error ${error}`);
 		}
 	});
@@ -86,8 +91,12 @@ function getData() {
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
+			
 			statsTable = document.getElementById('statsTable');
-			statsTable.innerHTML += dataToHTML(map, '2023');
+			for (const key of map.keys()){
+				var value = new Map(Object.entries(map.get(key)));
+				statsTable.innerHTML += dataToHTML(value, key);
+			}
 		},
 		error: function (error) {
 			console.log(`Error ${error}`);

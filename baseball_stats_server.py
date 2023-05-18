@@ -6,13 +6,10 @@ app = Flask(__name__)
 CORS(app)
 
 # convert player data frpm api call into map
-def getPlayerHittingStatsToMap(player_name, season_type):
-	if season_type == 'career':
-		player_stats_str = statsapi.player_stats(next(x['id'] for x in statsapi.get('sports_players',{'season':2022,'gameType':'W'})['people'] if x['fullName']== player_name), 'hitting', 'career')
-		player_stats_arr = player_stats_str.split("Career Hitting")[1].strip().split("\n")
-	else: # season
-		player_stats_str = statsapi.player_stats(next(x['id'] for x in statsapi.get('sports_players',{'season':2023,'gameType':'W'})['people'] if x['fullName']== player_name), 'hitting', 'season')
-		player_stats_arr = player_stats_str.split("Season Hitting")[1].strip().split("\n")
+def getPlayerCareerHittingStats(player_name):
+	id = next(x['id'] for x in statsapi.get('sports_players',{'season':2023,'gameType':'W'})['people'] if x['fullName']== player_name)
+	player_stats_str = statsapi.player_stats(id, 'hitting', 'career')
+	player_stats_arr = player_stats_str.split("Career Hitting")[1].strip().split("\n")
 
 	player_stats_map = {}
 	for stat in player_stats_arr:
@@ -22,20 +19,28 @@ def getPlayerHittingStatsToMap(player_name, season_type):
 		player_stats_map[stat_name] = stat_val
 		
 	return player_stats_map
+
+def getPlayerSeasonHittingStats(player_name):
+	id = next(x['id'] for x in statsapi.get('sports_players',{'season':2023,'gameType':'W'})['people'] if x['fullName']== player_name)
+
+	stats_seasons_map = {}
+	for season_data in statsapi.player_stat_data(id, group="hitting", type="yearByYear", sportId=1)['stats']:
+		year = season_data['season']
+		stats_seasons_map[year] = season_data['stats']
+	
+	return stats_seasons_map
 	
 @app.route('/career', methods = ['GET'])
 def getDataCareer():
 	player_user_input = request.values.get('player_name')
-	print(player_user_input)
-	player_stats_map = getPlayerHittingStatsToMap(player_user_input, 'career')
+	player_stats_map = getPlayerCareerHittingStats(player_user_input)
 		
 	return jsonify(player_stats_map)
 	
 @app.route('/seasons', methods = ['GET'])
 def getDataSeasons():
 	player_user_input = request.values.get('player_name')
-	print(player_user_input)
-	player_stats_map = getPlayerHittingStatsToMap(player_user_input, 'season')
+	player_stats_map = getPlayerSeasonHittingStats(player_user_input)
 		
 	return jsonify(player_stats_map)
 
