@@ -9,5 +9,6 @@ Example: Mike Trout <br />
 Inputting misspelled names or inactive players will result in an error. <br />
 <br />
 To run app: <br />
-1. run python3 baseball_stats_server.py in terminal <br />
-2. double click baseball.html to run app in web browser <br />
+1. Install dependencies: pip install -r requirements.txt <br />
+1. Run python3 baseball_stats_server.py in terminal <br />
+2. Double-click baseball.html to run app in web browser <br />
