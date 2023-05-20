@@ -13,62 +13,207 @@
 	<button onclick = "getData('hitting')" > Submit </button> <br>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<table id = 'statsTable'>
-	<thead>
-		<tr>
-			<th>Year</th>
-			<th>GP</th>
-			<th>PA</th>
-			<th>AB</th>
-			<th>BB</th>
-			<th>Hits</th>
-			<th>2B</th>
-			<th>3B</th>
-			<th>HR</th>
-			<th>AVG</th>
-			<th>OBP</th>
-			<th>SLG</th>
-			<th>OPS</th>
-			<th>RBI</th>
-			<th>Runs</th>
-			<th>SO</th>
-			<th>SB</th>
-			<th>BABIP</th>
-			<th>HBP</th>
-		</tr>
-	</thead>
-</table>
+<div>
+	<p> Hitter Stats</p>
+	<table id = 'statsTable'>
+		<thead>
+			<tr>
+				<th>Year</th>
+				<th>GP</th>
+				<th>PA</th>
+				<th>AB</th>
+				<th>BB</th>
+				<th>Hits</th>
+				<th>2B</th>
+				<th>3B</th>
+				<th>HR</th>
+				<th>AVG</th>
+				<th>OBP</th>
+				<th>SLG</th>
+				<th>OPS</th>
+				<th>RBI</th>
+				<th>Runs</th>
+				<th>SO</th>
+				<th>SB</th>
+				<th>BABIP</th>
+				<th>HBP</th>
+			</tr>
+		</thead>
+	</table>
+</div>
 <div>
 	<label for="pitcher_name">Enter Pitcher Name:</label> <br>
 	<input type="text" id="pitcher_name" name="pitcher_name"> <br>
 	<button onclick = "getData('pitching')" > Submit </button> <br>
 </div>
-<table id = 'pitcherStatsTable'>
-	<thead>
-		<tr>
-			<th>Year</th>
-			<th>Starts</th>
-			<th>GP</th>
-			<th>IP</th>
-			<th>W</th>
-			<th>L</th>
-			<th>ERA</th>
-			<th>Opp. Avg</th>
-			<th>WHIP</th>
-			<th>SO</th>
-			<th>BB</th>
-			<th>Hits</th>
-			<th>HR</th>
-			<th>Strike %</th>
-			<th>Saves</th>
-			<th>Save Opps</th>
-			<th>CG</th>
-			<th>Shut Outs</th>
-			<th>Wild Pitches</th>
-		</tr>
-	</thead>
-</table>
+<div>
+	<p> Pitcher Stats</p>
+	<table id = 'pitcherStatsTable'>
+		<thead>
+			<tr>
+				<th>Year</th>
+				<th>Starts</th>
+				<th>GP</th>
+				<th>IP</th>
+				<th>W</th>
+				<th>L</th>
+				<th>ERA</th>
+				<th>Opp. Avg</th>
+				<th>WHIP</th>
+				<th>SO</th>
+				<th>BB</th>
+				<th>Hits</th>
+				<th>HR</th>
+				<th>Strike %</th>
+				<th>Saves</th>
+				<th>Save Opps</th>
+				<th>CG</th>
+				<th>Shut Outs</th>
+				<th>Wild Pitches</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<div>
+	<h1> League Leaders</h1> <br>
+	<h2> Pitching </h2> <br>
+	<p> ERA </p>
+	<table id = 'eraLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> WHIP </p>
+	<table id = 'whipLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> SO </p>
+	<table id = 'soLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> IP </p>
+	<table id = 'ipLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table> 
+	<br>
+	<h2> Hitting  </h2>
+	<p> Avg </p>
+	<table id = 'avgLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> OBP</p>
+	<table id = 'obpLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> SLG </p>
+	<table id = 'slgLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> OPS </p>
+	<table id = 'opsLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> Hits </p>
+	<table id = 'hitsLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> HR </p>
+	<table id = 'hrLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> RBI</p>
+	<table id = 'rbiLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p> SB </p>
+	<table id = 'sbLeader'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Name</th>
+				<th>Team</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+	</table>
+</div>
 <script>
+var leagueLeaders;
 function dataToHTML (map, year) {
 	const GP = map.get("gamesPlayed");
 	const PA = map.get("plateAppearances");
@@ -113,6 +258,14 @@ function pitcherDataToHTML (map, year) {
 	const wildPitches = map.get("wildPitches");
 	const htmlDataStr = `<tr> <td> ${year} </td> <td> ${starts} </td> <td> ${GP} </td> <td> ${IP} </td> <td> ${W} </td> <td> ${L} </td> <td> ${ERA} </td> <td> ${oppAvg} </td> <td> ${whip} </td> <td> ${SO} </td> <td> ${BB} </td> <td> ${hits} </td> <td> ${HR} </td> <td> ${strikeP} </td> <td> ${saves} </td> <td> ${saveOpps} </td> <td> ${CG} </td> <td> ${shutOuts} </td> <td> ${wildPitches} </td> </tr>`;
 	return htmlDataStr;	
+}
+function leaderDataToHTML(data) {
+	const rank = data[0][0];
+	const name = data[0][1];
+	const team = data[0][2];
+	const value = data[0][3];
+	const htmlDataStr = `<tr> <td> ${rank} </td> <td> ${name} </td> <td> ${team} </td> <td> ${value} </td> </tr>`;
+	return htmlDataStr;
 }
 function getData(player_type) {
 	$("#statsTable").find("tr:gt(0)").remove();
@@ -175,6 +328,46 @@ function getData(player_type) {
 		}
 	});
 }
+$.ajax({
+		type: 'get',
+		url: 'http://127.0.0.1:5000/leaders',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			leagueLeaders = new Map(Object.entries(JSON.parse(data2)));
+
+			for (const key of leagueLeaders.keys()){
+				var value = leagueLeaders.get(key);
+				if (key == "ERA") {
+					document.getElementById("eraLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "WHIP") {
+					document.getElementById("whipLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "SO") {
+					document.getElementById("soLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "IP") {
+					document.getElementById("ipLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "BA") {
+					document.getElementById("avgLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "OBP") {
+					document.getElementById("obpLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "SLG") {
+					document.getElementById("slgLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "OPS") {
+					document.getElementById("opsLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "Hits") {
+					document.getElementById("hitsLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "HR") {
+					document.getElementById("hrLeader").innerHTML += leaderDataToHTML(value);
+				} else if (key == "SB") {
+					document.getElementById("sbLeader").innerHTML += leaderDataToHTML(value);
+				} else { // RBI
+					document.getElementById("rbiLeader").innerHTML += leaderDataToHTML(value);
+				} 
+			}
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
 </script>
 </body>
 </html>

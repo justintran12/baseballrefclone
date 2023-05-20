@@ -31,6 +31,36 @@ def getPlayerSeasonStats(player_name, player_type):
 	
 	return stats_seasons_map
 	
+def getLeagueLeaders():
+	era_leaders = statsapi.league_leader_data('earnedRunAverage',statGroup='pitching',limit=100,season=2023) 
+	whip_leaders = statsapi.league_leader_data('walksAndHitsPerInningPitched',statGroup='pitching',limit=100,season=2023) 
+	so_leaders = statsapi.league_leader_data('strikeouts',statGroup='pitching',limit=100,season=2023) 
+	ip_leaders = statsapi.league_leader_data('inningsPitched',statGroup='pitching',limit=100,season=2023) 
+	ba_leaders = statsapi.league_leader_data('battingAverage',statGroup='hitting',limit=100,season=2023) 
+	obp_leaders = statsapi.league_leader_data('onBasePercentage',statGroup='hitting',limit=100,season=2023) 
+	slg_leaders = statsapi.league_leader_data('sluggingPercentage',statGroup='hitting',limit=100,season=2023) 
+	ops_leaders = statsapi.league_leader_data('onBasePlusSlugging',statGroup='hitting',limit=100,season=2023) 
+	hit_leaders = statsapi.league_leader_data('hits',statGroup='hitting',limit=100,season=2023) 
+	hr_leaders = statsapi.league_leader_data('homeRuns',statGroup='hitting',limit=100,season=2023) 
+	sb_leaders = statsapi.league_leader_data('stolenBases',statGroup='hitting',limit=100,season=2023) 
+	rbi_leaders = statsapi.league_leader_data('runsBattedIn',statGroup='hitting',limit=100,season=2023) 
+
+	leader_stats = {}
+	leader_stats['ERA'] = era_leaders
+	leader_stats['WHIP'] = whip_leaders
+	leader_stats['SO'] = so_leaders
+	leader_stats['IP'] = ip_leaders
+	leader_stats['BA'] = ba_leaders
+	leader_stats['OBP'] = obp_leaders
+	leader_stats['SLG'] = slg_leaders
+	leader_stats['OPS'] = ops_leaders
+	leader_stats['Hits'] = hit_leaders
+	leader_stats['HR'] = hr_leaders
+	leader_stats['SB'] = sb_leaders
+	leader_stats['RBI'] = rbi_leaders
+
+	return leader_stats
+
 @app.route('/career', methods = ['GET'])
 def getDataCareer():
 	player_user_input = request.values.get('player_name')
@@ -46,6 +76,10 @@ def getDataSeasons():
 	player_stats_map = getPlayerSeasonStats(player_user_input, player_user_type)
 		
 	return jsonify(player_stats_map)
+
+@app.route('/leaders', methods = ['GET'])
+def getDataLeaders():
+	return jsonify(getLeagueLeaders())
 
 
 if __name__ == '__main__':
