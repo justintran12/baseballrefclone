@@ -1,5 +1,5 @@
 var leagueLeaders;
-function dataToHTML (map, year) {
+function dataToHTML(map, year, type) {
 	const GP = map.get("gamesPlayed");
 	const PA = map.get("plateAppearances");
 	const AB = map.get("atBats");
@@ -18,11 +18,15 @@ function dataToHTML (map, year) {
 	const SB = map.get("stolenBases");
 	const BABIP = map.get("babip");
 	const HBP = map.get("hitByPitch");
+	let htmlDataStr = ``;
+	if (type == 'single') {
+		htmlDataStr += `<tr> `
+	}
 	//const htmlDataStr = ("<tr> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> </tr>", GP, PA, AB, BB, Hits, Doubles, Triples, HR, AVG, OBP, SLG, OPS, RBI, Runs, SO, SB, BABIP, HBP);
-	const htmlDataStr = `<tr> <td> ${year} </td> <td> ${GP} </td> <td> ${PA} </td> <td> ${AB} </td> <td> ${BB} </td> <td> ${Hits} </td> <td> ${Doubles} </td> <td> ${Triples} </td> <td> ${HR} </td> <td> ${AVG} </td> <td> ${OBP} </td> <td> ${SLG} </td> <td> ${OPS} </td> <td> ${RBI} </td> <td> ${Runs} </td> <td> ${SO} </td> <td> ${SB} </td> <td> ${BABIP} </td> <td> ${HBP} </td> </tr>`;
+	htmlDataStr += `<td> ${year} </td> <td> ${GP} </td> <td> ${PA} </td> <td> ${AB} </td> <td> ${BB} </td> <td> ${Hits} </td> <td> ${Doubles} </td> <td> ${Triples} </td> <td> ${HR} </td> <td> ${AVG} </td> <td> ${OBP} </td> <td> ${SLG} </td> <td> ${OPS} </td> <td> ${RBI} </td> <td> ${Runs} </td> <td> ${SO} </td> <td> ${SB} </td> <td> ${BABIP} </td> <td> ${HBP} </td> </tr>`;
 	return htmlDataStr;	
 }
-function pitcherDataToHTML (map, year) {
+function pitcherDataToHTML(map, year, type) {
 	const starts = map.get("gamesStarted")
 	const GP = map.get("gamesPlayed");
 	const IP = map.get("inningsPitched");
@@ -41,8 +45,19 @@ function pitcherDataToHTML (map, year) {
 	const CG = map.get("completeGames");
 	const shutOuts = map.get("shutouts");
 	const wildPitches = map.get("wildPitches");
-	const htmlDataStr = `<tr> <td> ${year} </td> <td> ${starts} </td> <td> ${GP} </td> <td> ${IP} </td> <td> ${W} </td> <td> ${L} </td> <td> ${ERA} </td> <td> ${oppAvg} </td> <td> ${whip} </td> <td> ${SO} </td> <td> ${BB} </td> <td> ${hits} </td> <td> ${HR} </td> <td> ${strikeP} </td> <td> ${saves} </td> <td> ${saveOpps} </td> <td> ${CG} </td> <td> ${shutOuts} </td> <td> ${wildPitches} </td> </tr>`;
+	let htmlDataStr = ``;
+	if (type == 'single') {
+		htmlDataStr += `<tr> `
+	}
+	htmlDataStr += `<td> ${year} </td> <td> ${starts} </td> <td> ${GP} </td> <td> ${IP} </td> <td> ${W} </td> <td> ${L} </td> <td> ${ERA} </td> <td> ${oppAvg} </td> <td> ${whip} </td> <td> ${SO} </td> <td> ${BB} </td> <td> ${hits} </td> <td> ${HR} </td> <td> ${strikeP} </td> <td> ${saves} </td> <td> ${saveOpps} </td> <td> ${CG} </td> <td> ${shutOuts} </td> <td> ${wildPitches} </td> </tr>`;
 	return htmlDataStr;	
+}
+function playerInfoToHTML(player_data) {
+	const name = player_data[4] + " " + player_data[6];
+	const position = player_data[2];
+	const number = player_data[0];
+	const htmlDataStr = `<tr> <td> ${name} </td> <td> ${position} </td> <td> ${number} </td>`;
+	return htmlDataStr;
 }
 function leaderDataToHTML(data) {
 	const rank = data[0][0];
@@ -152,10 +167,10 @@ function getData(player_type) {
 			
 			if (player_type == "hitting") {
 				statsTable = document.getElementById('statsTable');
-				statsTable.innerHTML += dataToHTML(map, 'Career');
+				statsTable.innerHTML += dataToHTML(map, 'Career', 'single');
 			} else {
 				statsTable = document.getElementById('pitcherStatsTable');
-				statsTable.innerHTML += pitcherDataToHTML(map, 'Career');
+				statsTable.innerHTML += pitcherDataToHTML(map, 'Career', 'single');
 			}
 			
 			document.getElementById("getDataResponse").innerHTML = "Success, found player!"
@@ -183,9 +198,9 @@ function getData(player_type) {
 			for (const key of map.keys()){
 				var value = new Map(Object.entries(map.get(key)));
 				if (player_type == "hitting") {
-					statsTable.innerHTML += dataToHTML(value, key);
+					statsTable.innerHTML += dataToHTML(value, key, 'single');
 				} else {
-					statsTable.innerHTML += pitcherDataToHTML(value, key);
+					statsTable.innerHTML += pitcherDataToHTML(value, key, 'single');
 				}
 			}
 		},
@@ -235,4 +250,43 @@ function getLeagueLeaders() {
             console.log(`Error ${error}`);
         }
     });
+}
+function getTeamData() {
+	$("#hittersTable").find("tr:gt(0)").remove();
+	$("#pitchersTable").find("tr:gt(0)").remove();
+	var teamNameInput = document.getElementById("team_name").value;
+	$.ajax({
+		type: 'get',
+		url: 'http://127.0.0.1:5000/roster',
+		data: {'team_name':teamNameInput},
+		dataType: 'json',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+
+			let hittersTable = document.getElementById('hittersTable');
+			let pitchersTable = document.getElementById('pitchersTable');
+
+			for (const key of map.keys()){
+				let value = new Map(Object.entries(map.get(key)));
+				let player_data = key.split(/(\s+)/);
+				let player_info_html = playerInfoToHTML(player_data); 
+				if (player_data[2] == "P") {
+					let player_stats_html = pitcherDataToHTML(value, value.get("year"), 'roster');
+					let player_total_info = player_info_html + player_stats_html;
+					console.log(player_total_info);
+					pitchersTable.innerHTML += player_total_info;
+				} else {
+					let player_stats_html = dataToHTML(value, value.get("year"), 'roster');
+					let player_total_info = player_info_html + player_stats_html;
+					console.log(player_total_info);
+					hittersTable.innerHTML += player_total_info;
+				}
+				
+			}
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
 }

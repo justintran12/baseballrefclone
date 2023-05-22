@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Baseball Reference Clone</title>
+<meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="baseballScript.js"></script>
+<h1>Team Stats</h1>
+<p id="getDataResponse"></p>
+</head>
+<body>
+<div>
+	<label for="team_name">Enter Team Name:</label> <br>
+	<input type="text" id="team_name" name="team_name"> <br>
+	<button onclick = "getTeamData()" > Submit </button> <br>
+</div>
+<div>
+	<p> Hitter Stats</p>
+	<table id = 'hittersTable'>
+		<thead>
+			<tr>
+				<th>Name</th>
+                <th>Position</th>
+                <th>Number</th>
+                <th>Year</th>
+				<th>GP</th>
+				<th>PA</th>
+				<th>AB</th>
+				<th>BB</th>
+				<th>Hits</th>
+				<th>2B</th>
+				<th>3B</th>
+				<th>HR</th>
+				<th>AVG</th>
+				<th>OBP</th>
+				<th>SLG</th>
+				<th>OPS</th>
+				<th>RBI</th>
+				<th>Runs</th>
+				<th>SO</th>
+				<th>SB</th>
+				<th>BABIP</th>
+				<th>HBP</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<div>
+	<p> Pitcher Stats</p>
+	<table id = 'pitchersTable'>
+		<thead>
+			<tr>
+				<th>Name</th>
+                <th>Position</th>
+                <th>Number</th>
+                <th>Year</th>
+				<th>Starts</th>
+				<th>GP</th>
+				<th>IP</th>
+				<th>W</th>
+				<th>L</th>
+				<th>ERA</th>
+				<th>Opp. Avg</th>
+				<th>WHIP</th>
+				<th>SO</th>
+				<th>BB</th>
+				<th>Hits</th>
+				<th>HR</th>
+				<th>Strike %</th>
+				<th>Saves</th>
+				<th>Save Opps</th>
+				<th>CG</th>
+				<th>Shut Outs</th>
+				<th>Wild Pitches</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+</body>
+</html>
