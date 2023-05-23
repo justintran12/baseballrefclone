@@ -238,7 +238,7 @@ function getLeagueLeaders() {
         url: 'http://127.0.0.1:5000/leaders',
         success: function (data) {
             const data2 = JSON.stringify(data);
-            let leagueLeaders = new Map(Object.entries(JSON.parse(data2)));
+            leagueLeaders = new Map(Object.entries(JSON.parse(data2)));
 
             for (const key of leagueLeaders.keys()){
                 var value = leagueLeaders.get(key);
