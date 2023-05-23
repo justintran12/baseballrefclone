@@ -63,6 +63,32 @@ def getLeagueLeaders():
 
 	return leader_stats
 
+def getTeamLeadersData(team_id):
+	leader_stats = {}
+	leader_stats['ERA'] = statsapi.team_leader_data(team_id, "earnedRunAverage")
+	leader_stats['SO9'] = statsapi.team_leader_data(team_id, "strikeoutsPer9Inn")
+	leader_stats['WHIP'] = statsapi.team_leader_data(team_id, "walksAndHitsPerInningPitched")
+	leader_stats['IP'] = statsapi.team_leader_data(team_id, "inningsPitched")
+	leader_stats['BA'] = statsapi.team_leader_data(team_id, "battingAverage")
+	leader_stats['OBP'] = statsapi.team_leader_data(team_id, "onBasePercentage")
+	leader_stats['SLG'] = statsapi.team_leader_data(team_id, "sluggingPercentage")
+	leader_stats['OPS'] = statsapi.team_leader_data(team_id, "onBasePlusSlugging")
+	leader_stats['Hits'] = statsapi.team_leader_data(team_id, "hits")
+	leader_stats['HR'] = statsapi.team_leader_data(team_id, "homeRuns")
+	leader_stats['SB'] = statsapi.team_leader_data(team_id, "stolenBases")
+	leader_stats['RBI'] = statsapi.team_leader_data(team_id, "runsBattedIn")
+	leader_stats['Saves'] = statsapi.team_leader_data(team_id, "saves")
+	
+	return leader_stats
+	
+def getRosterPlayerName(player_data):
+	player_name = "" 
+	for i in range(2,len(player_data) - 1):
+		player_name += player_data[i] + " "
+	player_name += player_data[len(player_data) - 1]
+
+	return player_name
+
 def getRosterData(team_id):
 	roster = statsapi.roster(team_id).split("\n") 
 	roster_map = {}
@@ -70,14 +96,15 @@ def getRosterData(team_id):
 	for player in roster:
 		if len(player) > 0:
 			player_data = player.split()
-			player_name = player_data[2] + " " + player_data[3]
+			player_name = getRosterPlayerName(player_data)
 			position =  player_data[1]
 			player_id = next(x['id'] for x in statsapi.get('sports_players',{'season':curr_season,'gameType':'W'})['people'] if x['fullName']== player_name)
 			player_type = "pitching" if position == 'P' else "hitting"
-			player_stats = statsapi.player_stat_data(player_id, group=player_type, type="season", sportId=1)['stats'][0]['stats']
-			player_stats['year'] = curr_season
-
-			roster_map[player] = player_stats
+			player_stats_data = statsapi.player_stat_data(player_id, group=player_type, type="season", sportId=1)['stats']
+			if len(player_stats_data) > 0:
+				player_stats = player_stats_data[0]['stats']
+				player_stats['year'] = curr_season
+				roster_map[player] = player_stats
 
 	return roster_map
 
@@ -111,6 +138,26 @@ def getTeamRoster():
 
 	return jsonify(roster_map)
 
+@app.route('/teamStandings', methods = ['GET'])
+def getTeamStandings():
+	team_name = request.values.get('team_name')
+	team = statsapi.lookup_team(team_name)
+	team_id = team[0]['id']
+	league = statsapi.get('team', {'teamId':team_id})['teams'][0]['league']['id']
+	division = statsapi.get('team', {'teamId':team_id})['teams'][0]['division']['id']
+	div_standings_map = statsapi.standings_data(leagueId = league)[division]
+
+	return jsonify(div_standings_map)
+
+
+@app.route('/teamLeaders', methods = ['GET'])
+def getTeamLeaders():
+	team_name = request.values.get('team_name')
+	team = statsapi.lookup_team(team_name)
+	team_id = team[0]['id']
+	team_leaders_map = getTeamLeadersData(team_id)
+
+	return jsonify(team_leaders_map)
 
 if __name__ == '__main__':
    app.run(debug = True)

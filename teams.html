@@ -12,10 +12,37 @@
 <div>
 	<label for="team_name">Enter Team Name:</label> <br>
 	<input type="text" id="team_name" name="team_name"> <br>
-	<button onclick = "getTeamData()" > Submit </button> <br>
+	<button onclick = "getTeamData();getDivisionStandings();getTeamLeaders()" > Submit </button> <br>
 </div>
 <div>
-	<p> Hitter Stats</p>
+	<p id = teamRecord></p>
+	<p id = teamRank> </p>
+</div>
+<div>
+	<h2>Team Leaders</h2>
+	<table id = 'leadersTable'>
+		<thead>
+			<tr>
+				<th>Avg</th>
+				<th>ERA</th>
+				<th>HR</th>
+				<th>Hits</th>
+				<th>IP</th>
+				<th>OBP</th>
+				<th>OPS</th>
+				<th>RBI</th>
+				<th>SB</th>
+				<th>SLG</th>
+				<th>SO per 9</th>
+				<th>Saves</th>
+				<th>WHIP</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<h2>Active 40-man Roster</h2>
+<div>
+	<h3> Hitter Stats</h3>
 	<table id = 'hittersTable'>
 		<thead>
 			<tr>
@@ -46,7 +73,7 @@
 	</table>
 </div>
 <div>
-	<p> Pitcher Stats</p>
+	<h3> Pitcher Stats</h3>
 	<table id = 'pitchersTable'>
 		<thead>
 			<tr>
@@ -72,6 +99,23 @@
 				<th>CG</th>
 				<th>Shut Outs</th>
 				<th>Wild Pitches</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<div>
+	<h2>Division Standings</h2>
+	<b> <p id = divName> </p> </b>
+	<table id = 'divisionTable'>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Team</th>
+				<th>W</th>
+				<th>L</th>
+				<th>GB</th>
+				<th>Wild Card Rank</th>
+				<th>Wild Card GB</th>
 			</tr>
 		</thead>
 	</table>

@@ -67,6 +67,29 @@ function leaderDataToHTML(data) {
 	const htmlDataStr = `<tr> <td> ${rank} </td> <td> ${name} </td> <td> ${team} </td> <td> ${value} </td> </tr>`;
 	return htmlDataStr;
 }
+function standingsToHTML(team) {
+	const rank = team.get('div_rank');
+	const name = team.get('name');
+	const w = team.get('w');
+	const l = team.get('l');
+	const gb = team.get('gb');
+	const wc_rank = team.get('wc_rank');
+	const wc_gb = team.get('wc_gb');
+	const htmlDataStr = `<tr> <td> ${rank} </td> <td> ${name} </td> <td> ${w} </td> <td> ${l} </td> <td> ${gb} </td> <td> ${wc_rank} </td> <td> ${wc_gb} </td> </tr>`;
+	return htmlDataStr;
+}
+function teamLeadersToHTML(map) {
+	let htmlDataStr = `<tr> `;
+	for (const key of map.keys()){
+		let statLeaders = map.get(key);
+		let rank1 = statLeaders[0];
+		let name = rank1[1];
+		let value = rank1[2];
+		htmlDataStr += `<td> ${name} :  ${value} </td>`;
+	}
+	htmlDataStr += ` <tr>`;
+	return htmlDataStr;
+}
 function rankToMap(leadersData, player, playerRanks, stat) {
 	for (let i = 0; i < leadersData.length; i++) {
 		if (player == leadersData[i][1]) {
@@ -80,7 +103,7 @@ function rankToMap(leadersData, player, playerRanks, stat) {
 function checkPitcherRank(player) {
 	let playerRanks = new Map();
 	for (const key of leagueLeaders.keys()) {
-		var leadersData = leagueLeaders.get(key);
+		let leadersData = leagueLeaders.get(key);
 		if (key == "ERA") {
 			rankToMap(leadersData, player, playerRanks, "ERA");
 		} else if (key == "WHIP") {
@@ -96,7 +119,7 @@ function checkPitcherRank(player) {
 function checkPositionPlayerRank(player) {
 	let playerRanks = new Map();
 	for (const key of leagueLeaders.keys()) {
-		var leadersData = leagueLeaders.get(key);
+		let leadersData = leagueLeaders.get(key);
 		if (key == "BA") {
 			rankToMap(leadersData, player, playerRanks, "BA");
 		} else if (key == "OBP") {
@@ -215,7 +238,7 @@ function getLeagueLeaders() {
         url: 'http://127.0.0.1:5000/leaders',
         success: function (data) {
             const data2 = JSON.stringify(data);
-            leagueLeaders = new Map(Object.entries(JSON.parse(data2)));
+            let leagueLeaders = new Map(Object.entries(JSON.parse(data2)));
 
             for (const key of leagueLeaders.keys()){
                 var value = leagueLeaders.get(key);
@@ -254,7 +277,7 @@ function getLeagueLeaders() {
 function getTeamData() {
 	$("#hittersTable").find("tr:gt(0)").remove();
 	$("#pitchersTable").find("tr:gt(0)").remove();
-	var teamNameInput = document.getElementById("team_name").value;
+	let teamNameInput = document.getElementById("team_name").value;
 	$.ajax({
 		type: 'get',
 		url: 'http://127.0.0.1:5000/roster',
@@ -274,16 +297,70 @@ function getTeamData() {
 				if (player_data[2] == "P") {
 					let player_stats_html = pitcherDataToHTML(value, value.get("year"), 'roster');
 					let player_total_info = player_info_html + player_stats_html;
-					console.log(player_total_info);
 					pitchersTable.innerHTML += player_total_info;
 				} else {
 					let player_stats_html = dataToHTML(value, value.get("year"), 'roster');
 					let player_total_info = player_info_html + player_stats_html;
-					console.log(player_total_info);
 					hittersTable.innerHTML += player_total_info;
 				}
 				
 			}
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+}
+function getDivisionStandings() {
+	$("#divisionTable").find("tr:gt(0)").remove();
+	let teamNameInput = document.getElementById("team_name").value;
+	$.ajax({
+		type: 'get',
+		url: 'http://127.0.0.1:5000/teamStandings',
+		data: {'team_name':teamNameInput},
+		dataType: 'json',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+
+			let divisionTable = document.getElementById('divisionTable');
+
+			let divName = map.get('div_name');
+			let teams = map.get('teams');
+			
+			document.getElementById('divName').innerHTML = divName;
+			for (let i = 0; i < teams.length; i++) {
+				let team = teams[i];
+				team = new Map(Object.entries(team));
+				if (team.get('name') == teamNameInput) {
+					let teamW = team.get('w');
+					let teamL = team.get('l');
+					let teamRecordStr = "Record: " + teamW + "-" + teamL;
+					let teamRankStr = "Rank " + team.get('div_rank') + " in the " + divName;
+					document.getElementById('teamRecord').innerHTML = teamRecordStr;
+					document.getElementById('teamRank').innerHTML = teamRankStr;
+				}
+				divisionTable.innerHTML += standingsToHTML(team);
+			}
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+}
+function getTeamLeaders() {
+	$("#leadersTable").find("tr:gt(0)").remove();
+	let teamNameInput = document.getElementById("team_name").value;
+	$.ajax({
+		type: 'get',
+		url: 'http://127.0.0.1:5000/teamLeaders',
+		data: {'team_name':teamNameInput},
+		dataType: 'json',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+			
+			document.getElementById('leadersTable').innerHTML += teamLeadersToHTML(map);
 		},
 		error: function (error) {
 			console.log(`Error ${error}`);
