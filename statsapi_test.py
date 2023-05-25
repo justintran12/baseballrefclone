@@ -13,7 +13,7 @@ for season_data in statsapi.player_stat_data(id, group="pitching", type="yearByY
 print(statsapi.player_stats(id, 'pitching', 'career').split("Career Pitching")[1].strip().split("\n"))
 '''
 
-team = statsapi.lookup_team('Atlanta Braves')
+team = statsapi.lookup_team('Seattle mariners')
 team_id = team[0]['id']
 #league = statsapi.get('team', {'teamId':team_id})['teams'][0]['league']['id']
 #division = statsapi.get('team', {'teamId':team_id})['teams'][0]['division']['id']

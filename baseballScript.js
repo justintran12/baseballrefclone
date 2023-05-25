@@ -1,4 +1,7 @@
+// global variables
 var leagueLeaders;
+
+// helper functions
 function dataToHTML(map, year, type) {
 	const GP = map.get("gamesPlayed");
 	const PA = map.get("plateAppearances");
@@ -20,7 +23,7 @@ function dataToHTML(map, year, type) {
 	const HBP = map.get("hitByPitch");
 	let htmlDataStr = ``;
 	if (type == 'single') {
-		htmlDataStr += `<tr> `
+		htmlDataStr += `<tr> `;
 	}
 	//const htmlDataStr = ("<tr> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> </tr>", GP, PA, AB, BB, Hits, Doubles, Triples, HR, AVG, OBP, SLG, OPS, RBI, Runs, SO, SB, BABIP, HBP);
 	htmlDataStr += `<td> ${year} </td> <td> ${GP} </td> <td> ${PA} </td> <td> ${AB} </td> <td> ${BB} </td> <td> ${Hits} </td> <td> ${Doubles} </td> <td> ${Triples} </td> <td> ${HR} </td> <td> ${AVG} </td> <td> ${OBP} </td> <td> ${SLG} </td> <td> ${OPS} </td> <td> ${RBI} </td> <td> ${Runs} </td> <td> ${SO} </td> <td> ${SB} </td> <td> ${BABIP} </td> <td> ${HBP} </td> </tr>`;
@@ -47,7 +50,7 @@ function pitcherDataToHTML(map, year, type) {
 	const wildPitches = map.get("wildPitches");
 	let htmlDataStr = ``;
 	if (type == 'single') {
-		htmlDataStr += `<tr> `
+		htmlDataStr += `<tr> `;
 	}
 	htmlDataStr += `<td> ${year} </td> <td> ${starts} </td> <td> ${GP} </td> <td> ${IP} </td> <td> ${W} </td> <td> ${L} </td> <td> ${ERA} </td> <td> ${oppAvg} </td> <td> ${whip} </td> <td> ${SO} </td> <td> ${BB} </td> <td> ${hits} </td> <td> ${HR} </td> <td> ${strikeP} </td> <td> ${saves} </td> <td> ${saveOpps} </td> <td> ${CG} </td> <td> ${shutOuts} </td> <td> ${wildPitches} </td> </tr>`;
 	return htmlDataStr;	
@@ -94,7 +97,7 @@ function rankToMap(leadersData, player, playerRanks, stat) {
 	for (let i = 0; i < leadersData.length; i++) {
 		if (player == leadersData[i][1]) {
 			let rank = leadersData[i][0];
-			let data = [rank, leadersData.length]
+			let data = [rank, leadersData.length];
 			playerRanks.set(stat, data);
 			break;
 		}
@@ -167,6 +170,8 @@ function ranksToString(playerRankMap, player) {
 	}
 	return rankStr;
 }
+
+// functions called when user presses button
 function getData(player_type) {
 	$("#statsTable").find("tr:gt(0)").remove();
 	$("#pitcherStatsTable").find("tr:gt(0)").remove();
@@ -367,3 +372,4 @@ function getTeamLeaders() {
 		}
 	});
 }
+
