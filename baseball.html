@@ -5,16 +5,163 @@
 <meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="baseballScript.js"></script>
-<h1>Player Stats</h1>
-<p id="getDataResponse"></p>
-</head>
+<link rel="stylesheet" href="mystyle.css">
+<h1>Baseball Reference Clone</h1>
+<ul>
+	<li><a href="baseball.html">Players</a></li>
+	<li><a href="teams.html">Teams</a></li>
+</ul>
 <body onload="getLeagueLeaders()">
-<div>
+	<div>
+		<div id ="header">
+			<h1>Player Stats</h1>
+			<p id="getDataResponse"></p>
+		</div>
+		<div id="leagueLeadersDiv">
+			<h1> League Leaders</h1> <br>
+			<h2> Pitching </h2> <br>
+			<p> ERA </p>
+			<table id = 'eraLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> WHIP </p>
+			<table id = 'whipLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> SO </p>
+			<table id = 'soLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> IP </p>
+			<table id = 'ipLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table> 
+			<br>
+			<h2> Hitting  </h2>
+			<p> Avg </p>
+			<table id = 'avgLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> OBP</p>
+			<table id = 'obpLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> SLG </p>
+			<table id = 'slgLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> OPS </p>
+			<table id = 'opsLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> Hits </p>
+			<table id = 'hitsLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> HR </p>
+			<table id = 'hrLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> RBI</p>
+			<table id = 'rbiLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+			<p> SB </p>
+			<table id = 'sbLeader'>
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Team</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+<div id ="hitterButton">
 	<label for="player_name">Enter Position Player Name:</label> <br>
 	<input type="text" id="player_name" name="player_name"> <br>
-	<button onclick = "getData('hitting')" > Submit </button> <br>
+	<button onclick = "getData('hitting')" > Search </button> <br>
 </div>
-<div>
+<div id ="hitterStats">
 	<p> Hitter Stats</p>
 	<table id = 'statsTable'>
 		<thead>
@@ -42,12 +189,12 @@
 		</thead>
 	</table>
 </div>
-<div>
+<div id ="pitcherButton">
 	<label for="pitcher_name">Enter Pitcher Name:</label> <br>
 	<input type="text" id="pitcher_name" name="pitcher_name"> <br>
 	<button onclick = "getData('pitching')" > Submit </button> <br>
 </div>
-<div>
+<div id = "pitcherStats">
 	<p> Pitcher Stats</p>
 	<table id = 'pitcherStatsTable'>
 		<thead>
@@ -75,147 +222,9 @@
 		</thead>
 	</table>
 </div>
-<div>
+<div id ="playerRanksDiv">
 	<h1>Player Ranking</h1>
 	<p id = playerRanks> </p>
-</div>
-<div>
-	<h1> League Leaders</h1> <br>
-	<h2> Pitching </h2> <br>
-	<p> ERA </p>
-	<table id = 'eraLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> WHIP </p>
-	<table id = 'whipLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> SO </p>
-	<table id = 'soLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> IP </p>
-	<table id = 'ipLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table> 
-	<br>
-	<h2> Hitting  </h2>
-	<p> Avg </p>
-	<table id = 'avgLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> OBP</p>
-	<table id = 'obpLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> SLG </p>
-	<table id = 'slgLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> OPS </p>
-	<table id = 'opsLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> Hits </p>
-	<table id = 'hitsLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> HR </p>
-	<table id = 'hrLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> RBI</p>
-	<table id = 'rbiLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
-	<p> SB </p>
-	<table id = 'sbLeader'>
-		<thead>
-			<tr>
-				<th>Rank</th>
-				<th>Name</th>
-				<th>Team</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	</table>
 </div>
 </body>
 </html>
