@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify, after_this_request
 from flask_cors import CORS
 import baseball_stats as bs
+from mongoDB_utils import MongoDB
 
 app = Flask(__name__)
 CORS(app)
+
+db = MongoDB()
 
 # endpoints exposed
 @app.route('/career', methods = ['GET'])
@@ -50,6 +53,28 @@ def getTeamLeaders():
 	team_leaders_map = bs.getTeamLeadersData(team_id)
 
 	return jsonify(team_leaders_map)
+
+@app.route('/createUser', methods = ['POST'])
+def createNewUser():
+	new_username = request.values.get('new_username')
+	resp = db.createUser(new_username)
+
+	return {'created' : 'true'} if resp else {'created' : 'false'}
+
+@app.route('/getUserFavs', methods = ['GET'])
+def getUserFavs():
+	username = request.values.get('username')
+	user_doc = db.getFavs(username)
+
+	if user_doc is None:
+		return {'found' : 'false'}
+	else:
+		user_favs = {}
+		user_favs['found'] = 'true'
+		user_favs['fav_players'] = user_doc['fav_players']
+		user_favs['fav_teams'] = user_doc['fav_teams']
+		return jsonify(user_favs)
+
 
 if __name__ == '__main__':
    app.run(debug = True)

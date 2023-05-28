@@ -1,5 +1,6 @@
 // global variables
 var leagueLeaders;
+var currUser = "";
 
 // helper functions
 function dataToHTML(map, year, type) {
@@ -169,6 +170,14 @@ function ranksToString(playerRankMap, player) {
 		rankStr += lastRank + " out of " + lastTotal + " in " + lastStat;
 	}
 	return rankStr;
+}
+function favToHTML(favList, htmlElement) {
+	for (let i = 0; i < favList.length; i++) {
+		let node = document.createElement('li');
+		node.appendChild(document.createTextNode(favList[i]));
+		 
+		document.getElementById(htmlElement).appendChild(node);
+	}
 }
 
 // functions called when user presses button
@@ -366,6 +375,59 @@ function getTeamLeaders() {
 			const map = new Map(Object.entries(JSON.parse(data2)));
 			
 			document.getElementById('leadersTable').innerHTML += teamLeadersToHTML(map);
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+}
+function createNewUser() {
+	let newUserNameInput = document.getElementById("new_userName").value;
+	$.ajax({
+		type: 'post',
+		url: 'http://127.0.0.1:5000/createUser',
+		data: {'new_username':newUserNameInput},
+		dataType: 'json',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+			if (map.get("created") == "true") {
+				document.getElementById('createAccountResp').innerHTML = "Successfully created new user: " + newUserNameInput;
+			} else {
+				document.getElementById('createAccountResp').innerHTML = "Did not create new user: " + newUserNameInput + ", user already exists";
+			}
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+}
+function getUserFavs() {
+	let userNameInput = document.getElementById("exist_userName").value;
+	$.ajax({
+		type: 'get',
+		url: 'http://127.0.0.1:5000/getUserFavs',
+		data: {'username':userNameInput},
+		dataType: 'json',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+			if (map.get("found") == "false") {
+				document.getElementById('existAccountResp').innerHTML = "User not found";
+				document.getElementById("favPlayers").innerHTML = "";
+				document.getElementById("favTeams").innerHTML = "";
+			} else if (currUser == userNameInput) {
+				document.getElementById('existAccountResp').innerHTML = "Already using user:" + userNameInput;
+			} else {
+				document.getElementById("favPlayers").innerHTML = "";
+				document.getElementById("favTeams").innerHTML = "";
+				document.getElementById('existAccountResp').innerHTML = "User: " + userNameInput;
+				let favPlayers = map.get("fav_players");
+				let favTeams = map.get("fav_teams");
+				favToHTML(favPlayers, "favPlayers");
+				favToHTML(favTeams, "favTeams");
+			}
+			currUser = userNameInput;
 		},
 		error: function (error) {
 			console.log(`Error ${error}`);

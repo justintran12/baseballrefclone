@@ -7,13 +7,15 @@ class MongoDB:
         self.db = client["user_favorites"]
         self.favorites = self.db["favorites"]
 
-    # assume createUser only called when username does not already exist in collection, but just in case do not create a duplicate username document
+    # assume createUser only called when username does not already exist in collection, but just in case do not create a duplicate username document. Return true if created a new user.
     def createUser(self, username):
         if not self.getFavs(username):
             user_favs = {"user": username,
                         "fav_teams": [],
                         "fav_players": []}
             self.favorites.insert_one(user_favs)
+            return True
+        return False
 
     # assume when insertFav is called, the username exists in the collection
     def insertFav(self, username, fav, favType):

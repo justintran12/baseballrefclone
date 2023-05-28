@@ -4,7 +4,7 @@ h1 {
   margin-left: 20px;
 }
 
-ul {
+ul:not(#favPlayers) {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -13,11 +13,11 @@ ul {
 }
 
 /* horizontal header */
-li {
+li:not(#favPlayers) {
   float: left;
 }
 
-li a {
+li a:not(#favPlayers) {
   display: block;
   color: white;
   text-align: center;
@@ -26,7 +26,7 @@ li a {
 }
 
 /* Change the link color to #111 (black) on hover */
-li a:hover {
+li a:hover:not(#favPlayers) {
   background-color: #111;
 }
 
