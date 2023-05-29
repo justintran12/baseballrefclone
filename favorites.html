@@ -32,18 +32,29 @@
     <p id = existAccountResp> </p>
 </div>
 <br>
-<div>
-    <p><b>Favorite Players</b></p>
-    <ul id="favPlayers">
+<p><b>Favorite Players</b></p>
+<div class="vertical-list" id="favPlayers">
 
-    </ul>
+</div>
+<br>
+<p><b>Favorite Teams</b></p>
+<div class="vertical-list" id="favTeams">
+
 </div>
 <br>
 <div>
-    <p><b>Favorite Teams</b></p>
-    <ul id="favTeams">
-
-    </ul>
+    <p><b>Insert Favorite Players</b></p>
+    <label for="insert_player">Enter a player:</label> <br>
+	<input type="text" id="insert_player" name="insert_player"> <br>
+	<button onclick = "insertUserFavs('player')" > Submit </button> <br>
+    <p id = insertPlayerResp> </p>
+</div>
+<div>
+    <p><b>Insert Favorite Teams</b></p>
+    <label for="insert_team">Enter a Team:</label> <br>
+	<input type="text" id="insert_team" name="insert_team"> <br>
+	<button onclick = "insertUserFavs('team')" > Submit </button> <br>
+    <p id = insertTeamResp> </p>
 </div>
 </body>
 </html>

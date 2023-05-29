@@ -17,7 +17,7 @@ class MongoDB:
             return True
         return False
 
-    # assume when insertFav is called, the username exists in the collection
+    # assume when insertFav is called, the username exists in the collection. Duplicate favorites will not be added and false is returned. If favorite is successfully added, true is returned.
     def insertFav(self, username, fav, favType):
         fav_doc = self.getFavs(username)
         fav_type = "fav_players" if favType == "player" else "fav_teams"
@@ -27,6 +27,8 @@ class MongoDB:
             filter = { "user" : username}
             new_favs = { "$set": { fav_type : fav_list} }
             self.favorites.update_one(filter, new_favs)
+            return True
+        return False
 
     # returns None if username not in collection
     def getFavs(self, username):
@@ -54,3 +56,6 @@ class MongoDB:
     # delete all users
     def deleteAll(self):
         self.favorites.delete_many({})
+
+#mongo = MongoDB()
+#mongo.clearFavs("justin")

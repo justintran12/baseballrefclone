@@ -75,6 +75,16 @@ def getUserFavs():
 		user_favs['fav_teams'] = user_doc['fav_teams']
 		return jsonify(user_favs)
 
+@app.route('/insertUserFavs', methods = ['POST'])
+def insertUserFavs():
+	fav_name = request.values.get('fav_name')
+	fav_type = request.values.get('type')
+	username = request.values.get('username')
+
+	resp = db.insertFav(username, fav_name, fav_type)
+
+	return {'inserted' : 'true'} if resp else {'inserted' : 'false'}
+
 
 if __name__ == '__main__':
    app.run(debug = True)

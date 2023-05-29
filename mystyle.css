@@ -4,7 +4,7 @@ h1 {
   margin-left: 20px;
 }
 
-ul:not(#favPlayers) {
+ul:not(#favPlayers, #favTeams) {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -13,11 +13,11 @@ ul:not(#favPlayers) {
 }
 
 /* horizontal header */
-li:not(#favPlayers) {
+li:not(#favPlayers, #favTeams) {
   float: left;
 }
 
-li a:not(#favPlayers) {
+li a:not(#favPlayers, #favTeams) {
   display: block;
   color: white;
   text-align: center;
@@ -26,8 +26,19 @@ li a:not(#favPlayers) {
 }
 
 /* Change the link color to #111 (black) on hover */
-li a:hover:not(#favPlayers) {
+li a:hover:not(#favPlayers, #favTeams) {
   background-color: #111;
+}
+
+.vertical-list {
+  width: 200px; /* Set a width if you like */
+}
+
+.vertical-list a {
+  background-color: #eee; /* Grey background color */
+  color: black; /* Black text color */
+  display: block; /* Make the links appear below each other */
+  padding: 12px; /* Add some padding */
 }
 
 #header {

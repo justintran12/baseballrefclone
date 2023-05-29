@@ -1,6 +1,7 @@
 // global variables
 var leagueLeaders;
 var currUser = "";
+var userNotFound = true;
 
 // helper functions
 function dataToHTML(map, year, type) {
@@ -173,7 +174,7 @@ function ranksToString(playerRankMap, player) {
 }
 function favToHTML(favList, htmlElement) {
 	for (let i = 0; i < favList.length; i++) {
-		let node = document.createElement('li');
+		let node = document.createElement('p');
 		node.appendChild(document.createTextNode(favList[i]));
 		 
 		document.getElementById(htmlElement).appendChild(node);
@@ -416,6 +417,7 @@ function getUserFavs() {
 				document.getElementById('existAccountResp').innerHTML = "User not found";
 				document.getElementById("favPlayers").innerHTML = "";
 				document.getElementById("favTeams").innerHTML = "";
+				userNotFound = true;
 			} else if (currUser == userNameInput) {
 				document.getElementById('existAccountResp').innerHTML = "Already using user:" + userNameInput;
 			} else {
@@ -426,6 +428,7 @@ function getUserFavs() {
 				let favTeams = map.get("fav_teams");
 				favToHTML(favPlayers, "favPlayers");
 				favToHTML(favTeams, "favTeams");
+				userNotFound = false;
 			}
 			currUser = userNameInput;
 		},
@@ -434,4 +437,39 @@ function getUserFavs() {
 		}
 	});
 }
-
+function insertUserFavs(type) {
+	let insertFavInput = document.getElementById("insert_team").value;
+	if (type == 'player') {
+		insertFavInput = document.getElementById("insert_player").value;
+	}
+	if (!userNotFound) {
+		$.ajax({
+			type: 'post',
+			url: 'http://127.0.0.1:5000/insertUserFavs',
+			data: {'fav_name':insertFavInput, 
+				'type':type,
+				'username':currUser},
+			dataType: 'json',
+			success: function (data) {
+				const data2 = JSON.stringify(data);
+				const map = new Map(Object.entries(JSON.parse(data2)));
+				if (map.get('inserted') == 'true') {
+					favList = [insertFavInput];
+					if (type == 'player') {
+						favToHTML(favList, "favPlayers");
+					} else {
+						favToHTML(favList, "favTeams");
+					}
+					document.getElementById('insertPlayerResp').innerHTML = "Successfully inserted favorite";
+				} else {
+					document.getElementById('insertPlayerResp').innerHTML = "Favorite not inserted, it already exists in favorites list";
+				}
+			},
+			error: function (error) {
+				console.log(`Error ${error}`);
+			}
+		});
+	} else {
+		document.getElementById('insertPlayerResp').innerHTML = "Valid user not entered, please enter an existing user or create a new user";
+	}
+}
