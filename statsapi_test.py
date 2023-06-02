@@ -1,9 +1,9 @@
 # file for testing statsapi functions
 import statsapi
 
-player_name = 'George Kirby'
-id = next(x['id'] for x in statsapi.get('sports_players',{'season':2023,'gameType':'W'})['people'] if x['fullName']== player_name)
-
+player_name = 'Paul Sewald'
+id = next(x for x in statsapi.get('sports_players',{'season':2023,'gameType':'W'})['people'] if x['fullName']== player_name)
+print(id['primaryPosition']['type'])
 '''
 stats_seasons_map = {}
 for season_data in statsapi.player_stat_data(id, group="pitching", type="yearByYear", sportId=1)['stats']:
@@ -19,7 +19,7 @@ team_id = team[0]['id']
 #division = statsapi.get('team', {'teamId':team_id})['teams'][0]['division']['id']
 #print( statsapi.roster(id).split("\n") )
 #print(statsapi.standings_data(leagueId = league)[division])
-print(statsapi.team_leader_data(team_id, "strikeoutsPer9Inn"))
+#print(statsapi.team_leader_data(team_id, "strikeoutsPer9Inn"))
 
 def getRosterData(team_id):
     roster = statsapi.roster(team_id).split("\n") 

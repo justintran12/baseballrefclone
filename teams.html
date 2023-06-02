@@ -5,6 +5,16 @@
 <meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="baseballScript.js"></script>
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+		favRedirected = localStorage.getItem('favRedirect');
+		if(favRedirected){
+			fav = localStorage.getItem('fav');
+			document.getElementById("team_name").value = fav;
+		}
+		localStorage.clear();
+	});
+  </script>
 <link rel="stylesheet" href="mystyle.css">
 <h1>Baseball Reference Clone</h1>
 <ul>

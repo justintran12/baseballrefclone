@@ -113,3 +113,10 @@ def getTeamStandingsData(team_id):
 	division = statsapi.get('team', {'teamId':team_id})['teams'][0]['division']['id']
 	div_standings_map = statsapi.standings_data(leagueId = league)[division]
 	return div_standings_map
+
+def getPlayerType(player_name):
+	curr_season = statsapi.latest_season()['seasonId']
+	player_info = next(x for x in statsapi.get('sports_players',{'season':curr_season,'gameType':'W'})['people'] if x['fullName']== player_name)
+	player_type = player_info['primaryPosition']['type']
+
+	return "pitching" if player_type == "Pitcher" else "hitting"

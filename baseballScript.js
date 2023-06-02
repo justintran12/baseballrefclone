@@ -174,59 +174,69 @@ function ranksToString(playerRankMap, player) {
 }
 function favToHTML(favList, htmlElement) {
 	for (let i = 0; i < favList.length; i++) {
-		let node = document.createElement('p');
-		node.appendChild(document.createTextNode(favList[i]));
+		let node = document.createElement('a');
+		let fav = favList[i];
+		node.setAttribute("href", "javascript:;");
+		node.setAttribute("onclick", `goToStats("${fav}", "${htmlElement}")`);
+		node.appendChild(document.createTextNode(fav));
 		 
 		document.getElementById(htmlElement).appendChild(node);
 	}
 }
-
+function goToStats(fav, type) {
+	localStorage.setItem('fav', fav);
+	localStorage.setItem('favRedirect', true);
+	if (type == "favTeams") {
+		window.location.href = "teams.html";
+	} else {
+		window.location.href = "baseball.html";
+	}
+}
 // functions called when user presses button
-function getData(player_type) {
+function getData() {
 	$("#statsTable").find("tr:gt(0)").remove();
 	$("#pitcherStatsTable").find("tr:gt(0)").remove();
-	if (player_type == "hitting") {
-		var playerNameInput = document.getElementById("player_name").value;
-		var playerRanks = checkPositionPlayerRank(playerNameInput);
-		document.getElementById("playerRanks").innerHTML = ranksToString(playerRanks, playerNameInput);
-	} else {
-		var playerNameInput = document.getElementById("pitcher_name").value;
-		var playerRanks = checkPitcherRank(playerNameInput);
-		document.getElementById("playerRanks").innerHTML = ranksToString(playerRanks, playerNameInput);
-	}
+	var playerNameInput = document.getElementById("player_name").value;
+
 	$.ajax({
 		type: 'get',
 		url: 'http://127.0.0.1:5000/career',
-		data: {'player_name':playerNameInput, 'player_type':player_type},
+		data: {'player_name':playerNameInput},
 		dataType: 'json',
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
-			
+			const player_type = map.get('type');
+
 			if (player_type == "hitting") {
+				var playerRanks = checkPositionPlayerRank(playerNameInput);
 				statsTable = document.getElementById('statsTable');
 				statsTable.innerHTML += dataToHTML(map, 'Career', 'single');
 			} else {
+				var playerRanks = checkPitcherRank(playerNameInput);
 				statsTable = document.getElementById('pitcherStatsTable');
 				statsTable.innerHTML += pitcherDataToHTML(map, 'Career', 'single');
 			}
+
+			document.getElementById("playerRanks").innerHTML = ranksToString(playerRanks, playerNameInput);
 			
-			document.getElementById("getDataResponse").innerHTML = "Success, found player!"
+			document.getElementById("getDataResponse").innerHTML = "Success, found player!";
 		},
 		error: function (error) {
-			document.getElementById("getDataResponse").innerHTML = "Error player not found, player may be inactive or you misspelled the name"
+			document.getElementById("getDataResponse").innerHTML = "Error player not found, player may be inactive or you misspelled the name";
 			console.log(`Error ${error}`);
 		}
 	});
 	$.ajax({
 		type: 'get',
 		url: 'http://127.0.0.1:5000/seasons',
-		data: {'player_name':playerNameInput, 'player_type':player_type},
+		data: {'player_name':playerNameInput},
 		dataType: 'json',
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
-			
+			const player_type = map.get('type');
+
 			if (player_type == "hitting") {
 				statsTable = document.getElementById('statsTable');
 			} else {
@@ -234,11 +244,13 @@ function getData(player_type) {
 			}
 
 			for (const key of map.keys()){
-				var value = new Map(Object.entries(map.get(key)));
-				if (player_type == "hitting") {
-					statsTable.innerHTML += dataToHTML(value, key, 'single');
-				} else {
-					statsTable.innerHTML += pitcherDataToHTML(value, key, 'single');
+				if (key != 'type') {
+					var value = new Map(Object.entries(map.get(key)));
+					if (player_type == "hitting") {
+						statsTable.innerHTML += dataToHTML(value, key, 'single');
+					} else {
+						statsTable.innerHTML += pitcherDataToHTML(value, key, 'single');
+					}
 				}
 			}
 		},
@@ -345,8 +357,8 @@ function getDivisionStandings() {
 			
 			document.getElementById('divName').innerHTML = divName;
 			for (let i = 0; i < teams.length; i++) {
-				let team = teams[i];
-				team = new Map(Object.entries(team));
+				let teamObj = teams[i];
+				team = new Map(Object.entries(teamObj));
 				if (team.get('name') == teamNameInput) {
 					let teamW = team.get('w');
 					let teamL = team.get('l');

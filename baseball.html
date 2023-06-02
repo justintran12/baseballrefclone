@@ -5,6 +5,16 @@
 <meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="baseballScript.js"></script>
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+		favRedirected = localStorage.getItem('favRedirect');
+		if(favRedirected){
+			fav = localStorage.getItem('fav');
+			document.getElementById("player_name").value = fav;
+		}
+		localStorage.clear();
+	});
+  </script>
 <link rel="stylesheet" href="mystyle.css">
 <h1>Baseball Reference Clone</h1>
 <ul>
@@ -158,9 +168,9 @@
 		</div>
 	</div>
 <div id ="hitterButton">
-	<label for="player_name">Enter Position Player Name:</label> <br>
+	<label for="player_name">Enter Player Name:</label> <br>
 	<input type="text" id="player_name" name="player_name"> <br>
-	<button onclick = "getData('hitting')" > Search </button> <br>
+	<button onclick = "getData()" > Search </button> <br>
 </div>
 <div id ="hitterStats">
 	<p> Hitter Stats</p>
@@ -190,11 +200,7 @@
 		</thead>
 	</table>
 </div>
-<div id ="pitcherButton">
-	<label for="pitcher_name">Enter Pitcher Name:</label> <br>
-	<input type="text" id="pitcher_name" name="pitcher_name"> <br>
-	<button onclick = "getData('pitching')" > Search </button> <br>
-</div>
+<br>
 <div id = "pitcherStats">
 	<p> Pitcher Stats</p>
 	<table id = 'pitcherStatsTable'>
