@@ -23,6 +23,6 @@ Inputting misspelled names or inactive players/teams will result in an error. <b
 
 # To run app: <br />
 1. Install dependencies: pip install -r requirements.txt <br />
-2. Install MongoDB and start the daemon <br />
+2. Install MongoDB and start the daemon using this command on linux:  sudo systemctl start mongod <br />
 3. Run python3 baseball_stats_server.py in terminal <br />
 4. Double-click baseball.html to run app in web browser <br />
