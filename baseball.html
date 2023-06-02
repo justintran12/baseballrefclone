@@ -7,14 +7,18 @@
 <script type="text/javascript" src="baseballScript.js"></script>
 <script>
 	document.addEventListener('DOMContentLoaded',function(){
+		currUser = localStorage.getItem('currUser');
+		getLeagueLeaders();
 		favRedirected = localStorage.getItem('favRedirect');
 		if(favRedirected){
 			fav = localStorage.getItem('fav');
 			document.getElementById("player_name").value = fav;
+			setTimeout(getData, 3000);
 		}
 		localStorage.clear();
+		localStorage.setItem('currUser', currUser);
 	});
-  </script>
+</script>
 <link rel="stylesheet" href="mystyle.css">
 <h1>Baseball Reference Clone</h1>
 <ul>
@@ -22,7 +26,7 @@
 	<li><a href="teams.html">Teams</a></li>
 	<li><a href="favorites.html">Favorites</a></li>
 </ul>
-<body onload="getLeagueLeaders()">
+<body>
 	<div>
 		<div id ="header">
 			<h1>Player Stats</h1>

@@ -1,6 +1,5 @@
 // global variables
 var leagueLeaders;
-var currUser = "";
 var userNotFound = true;
 
 // helper functions
@@ -197,7 +196,6 @@ function getData() {
 	$("#statsTable").find("tr:gt(0)").remove();
 	$("#pitcherStatsTable").find("tr:gt(0)").remove();
 	var playerNameInput = document.getElementById("player_name").value;
-
 	$.ajax({
 		type: 'get',
 		url: 'http://127.0.0.1:5000/career',
@@ -406,6 +404,8 @@ function createNewUser() {
 			const map = new Map(Object.entries(JSON.parse(data2)));
 			if (map.get("created") == "true") {
 				document.getElementById('createAccountResp').innerHTML = "Successfully created new user: " + newUserNameInput;
+				window.localStorage.setItem("currUser", newUserNameInput);
+				getUserFavs();
 			} else {
 				document.getElementById('createAccountResp').innerHTML = "Did not create new user: " + newUserNameInput + ", user already exists";
 			}
@@ -415,46 +415,56 @@ function createNewUser() {
 		}
 	});
 }
-function getUserFavs() {
+function setUser() {
 	let userNameInput = document.getElementById("exist_userName").value;
-	$.ajax({
-		type: 'get',
-		url: 'http://127.0.0.1:5000/getUserFavs',
-		data: {'username':userNameInput},
-		dataType: 'json',
-		success: function (data) {
-			const data2 = JSON.stringify(data);
-			const map = new Map(Object.entries(JSON.parse(data2)));
-			if (map.get("found") == "false") {
-				document.getElementById('existAccountResp').innerHTML = "User not found";
-				document.getElementById("favPlayers").innerHTML = "";
-				document.getElementById("favTeams").innerHTML = "";
-				userNotFound = true;
-			} else if (currUser == userNameInput) {
-				document.getElementById('existAccountResp').innerHTML = "Already using user:" + userNameInput;
-			} else {
-				document.getElementById("favPlayers").innerHTML = "";
-				document.getElementById("favTeams").innerHTML = "";
-				document.getElementById('existAccountResp').innerHTML = "User: " + userNameInput;
-				let favPlayers = map.get("fav_players");
-				let favTeams = map.get("fav_teams");
-				favToHTML(favPlayers, "favPlayers");
-				favToHTML(favTeams, "favTeams");
-				userNotFound = false;
+	let currUser = localStorage.getItem("currUser");
+	if (currUser == userNameInput) {
+		document.getElementById('existAccountResp').innerHTML = "Already using user:" + userNameInput;
+	} else {
+		window.localStorage.setItem("currUser", userNameInput);
+		getUserFavs();
+	}
+}
+function getUserFavs() {
+	let currUser = localStorage.getItem("currUser");
+	if (currUser) {
+		$.ajax({
+			type: 'get',
+			url: 'http://127.0.0.1:5000/getUserFavs',
+			data: {'username':currUser},
+			dataType: 'json',
+			success: function (data) {
+				const data2 = JSON.stringify(data);
+				const map = new Map(Object.entries(JSON.parse(data2)));
+				if (map.get("found") == "false") {
+					document.getElementById('existAccountResp').innerHTML = "User not found";
+					document.getElementById("favPlayers").innerHTML = "";
+					document.getElementById("favTeams").innerHTML = "";
+					userNotFound = true;
+				} else {
+					document.getElementById("favPlayers").innerHTML = "";
+					document.getElementById("favTeams").innerHTML = "";
+					document.getElementById('existAccountResp').innerHTML = "User: " + currUser;
+					let favPlayers = map.get("fav_players");
+					let favTeams = map.get("fav_teams");
+					favToHTML(favPlayers, "favPlayers");
+					favToHTML(favTeams, "favTeams");
+					userNotFound = false;
+				}
+			},
+			error: function (error) {
+				console.log(`Error ${error}`);
 			}
-			currUser = userNameInput;
-		},
-		error: function (error) {
-			console.log(`Error ${error}`);
-		}
-	});
+		});
+	} 
 }
 function insertUserFavs(type) {
+	let currUser = localStorage.getItem("currUser");
 	let insertFavInput = document.getElementById("insert_team").value;
 	if (type == 'player') {
 		insertFavInput = document.getElementById("insert_player").value;
 	}
-	if (!userNotFound) {
+	if (!userNotFound && currUser) {
 		$.ajax({
 			type: 'post',
 			url: 'http://127.0.0.1:5000/insertUserFavs',

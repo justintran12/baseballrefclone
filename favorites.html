@@ -5,6 +5,11 @@
 <meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="baseballScript.js"></script>
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+		getUserFavs();
+	});
+</script>
 <link rel="stylesheet" href="mystyle.css">
 <h1>Baseball Reference Clone</h1>
 <ul>
@@ -28,7 +33,7 @@
     <p><b>Get Existing User Favorites</b></p>
 	<label for="exist_userName">Enter Your Username:</label> <br>
 	<input type="text" id="exist_userName" name="exist_userName"> <br>
-	<button onclick = "getUserFavs()" > Submit </button> <br>
+	<button onclick = "setUser()" > Submit </button> <br>
     <p id = existAccountResp> </p>
 </div>
 <br>
