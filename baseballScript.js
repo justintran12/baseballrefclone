@@ -173,13 +173,23 @@ function ranksToString(playerRankMap, player) {
 }
 function favToHTML(favList, htmlElement) {
 	for (let i = 0; i < favList.length; i++) {
+		let divNode = document.createElement("div");
+		divId = randGenerator();
+		divNode.setAttribute("id", divId);
 		let node = document.createElement('a');
 		let fav = favList[i];
 		node.setAttribute("href", "javascript:;");
 		node.setAttribute("onclick", `goToStats("${fav}", "${htmlElement}")`);
 		node.appendChild(document.createTextNode(fav));
+
+		let buttonNode = document.createElement("button");
+		buttonNode.innerText = "X";
+		buttonNode.setAttribute("onclick", `deleteFav("${fav}")`);
 		 
-		document.getElementById(htmlElement).appendChild(node);
+		
+		document.getElementById(htmlElement).appendChild(divNode);
+		document.getElementById(divId).appendChild(node);
+		document.getElementById(divId).appendChild(buttonNode);
 	}
 }
 function goToStats(fav, type) {
@@ -190,6 +200,12 @@ function goToStats(fav, type) {
 	} else {
 		window.location.href = "baseball.html";
 	}
+}
+function randGenerator() {
+    var S4 = function() {
+       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    };
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 }
 // functions called when user presses button
 function getData() {
@@ -494,4 +510,19 @@ function insertUserFavs(type) {
 	} else {
 		document.getElementById('insertPlayerResp').innerHTML = "Valid user not entered, please enter an existing user or create a new user";
 	}
+}
+function deleteFav(fav) {
+	let currUser = localStorage.getItem("currUser");
+	$.ajax({
+		type: 'post',
+		url: 'http://127.0.0.1:5000/deleteFav',
+		data: {'username':currUser, 'fav':fav},
+		dataType: 'json',
+		success: function () {
+			getUserFavs();
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
 }

@@ -97,6 +97,13 @@ def insertUserFavs():
 
 	return {'inserted' : 'true'} if resp else {'inserted' : 'false'}
 
+@app.route('/deleteFav', methods = ['POST'])
+def deleteFav():
+	fav = request.values.get('fav')
+	username = request.values.get('username')
+
+	db.deleteFav(fav, username)
+	return jsonify(success=True)
 
 if __name__ == '__main__':
    app.run(debug = True)

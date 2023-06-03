@@ -57,5 +57,21 @@ class MongoDB:
     def deleteAll(self):
         self.favorites.delete_many({})
 
+    # delete a favorite team or player, only called when the x button associated with that favorite is clicked, so favorite is guaranteed to be in database
+    def deleteFav(self, fav, username):
+        fav_doc = self.getFavs(username)
+        fav_players = fav_doc["fav_players"]
+        fav_teams = fav_doc["fav_teams"]
+        filter = { "user" : username}
+
+        if fav in fav_players:
+            fav_players.remove(fav)
+            new_favs = { "$set": { "fav_players" : fav_players} }
+        else:
+            fav_teams.remove(fav)
+            new_favs = { "$set": { "fav_teams" : fav_teams} }
+
+        self.favorites.update_one(filter, new_favs)
+
 #mongo = MongoDB()
 #mongo.clearFavs("justin")
