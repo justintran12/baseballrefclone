@@ -7,6 +7,8 @@
 <script type="text/javascript" src="baseballScript.js"></script>
 <script>
 	document.addEventListener('DOMContentLoaded',function(){
+		// do not clear currUser field in cache 
+		// on page load run this code, if redirected to this page from favorites page, get data for the favorite team immediately
 		currUser = localStorage.getItem('currUser');
 		favRedirected = localStorage.getItem('favRedirect');
 		if(favRedirected){

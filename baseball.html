@@ -7,13 +7,15 @@
 <script type="text/javascript" src="baseballScript.js"></script>
 <script>
 	document.addEventListener('DOMContentLoaded',function(){
+		// do not clear currUser field in cache 
+		// on page load run this code, if redirected to this page from favorites page, get data for the favorite player immediately
 		currUser = localStorage.getItem('currUser');
 		getLeagueLeaders();
 		favRedirected = localStorage.getItem('favRedirect');
 		if(favRedirected){
 			fav = localStorage.getItem('fav');
 			document.getElementById("player_name").value = fav;
-			setTimeout(getData, 3000);
+			setTimeout(getData, 3000); // wait for getLeagueLeaders() to finish, getData() needs leaague leaders data
 		}
 		localStorage.clear();
 		localStorage.setItem('currUser', currUser);

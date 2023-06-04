@@ -1,6 +1,7 @@
 // global variables
 var leagueLeaders;
 var userNotFound = true;
+var IP = 'http://127.0.0.1:5000';
 
 // helper functions
 function dataToHTML(map, year, type) {
@@ -26,7 +27,6 @@ function dataToHTML(map, year, type) {
 	if (type == 'single') {
 		htmlDataStr += `<tr> `;
 	}
-	//const htmlDataStr = ("<tr> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> </tr>", GP, PA, AB, BB, Hits, Doubles, Triples, HR, AVG, OBP, SLG, OPS, RBI, Runs, SO, SB, BABIP, HBP);
 	htmlDataStr += `<td> ${year} </td> <td> ${GP} </td> <td> ${PA} </td> <td> ${AB} </td> <td> ${BB} </td> <td> ${Hits} </td> <td> ${Doubles} </td> <td> ${Triples} </td> <td> ${HR} </td> <td> ${AVG} </td> <td> ${OBP} </td> <td> ${SLG} </td> <td> ${OPS} </td> <td> ${RBI} </td> <td> ${Runs} </td> <td> ${SO} </td> <td> ${SB} </td> <td> ${BABIP} </td> <td> ${HBP} </td> </tr>`;
 	return htmlDataStr;	
 }
@@ -207,14 +207,17 @@ function randGenerator() {
     };
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 }
-// functions called when user presses button
+
+// AJAX APi calls to baseball_stats_server backend to get data
+
+// get data for players page
 function getData() {
 	$("#statsTable").find("tr:gt(0)").remove();
 	$("#pitcherStatsTable").find("tr:gt(0)").remove();
 	var playerNameInput = document.getElementById("player_name").value;
 	$.ajax({
 		type: 'get',
-		url: 'http://127.0.0.1:5000/career',
+		url: IP + '/career',
 		data: {'player_name':playerNameInput},
 		dataType: 'json',
 		success: function (data) {
@@ -243,7 +246,7 @@ function getData() {
 	});
 	$.ajax({
 		type: 'get',
-		url: 'http://127.0.0.1:5000/seasons',
+		url: IP + '/seasons',
 		data: {'player_name':playerNameInput},
 		dataType: 'json',
 		success: function (data) {
@@ -276,7 +279,7 @@ function getData() {
 function getLeagueLeaders() {
     $.ajax({
         type: 'get',
-        url: 'http://127.0.0.1:5000/leaders',
+        url: IP + '/leaders',
         success: function (data) {
             const data2 = JSON.stringify(data);
             leagueLeaders = new Map(Object.entries(JSON.parse(data2)));
@@ -315,13 +318,15 @@ function getLeagueLeaders() {
         }
     });
 }
+
+// get data for teams page
 function getTeamData() {
 	$("#hittersTable").find("tr:gt(0)").remove();
 	$("#pitchersTable").find("tr:gt(0)").remove();
 	let teamNameInput = document.getElementById("team_name").value;
 	$.ajax({
 		type: 'get',
-		url: 'http://127.0.0.1:5000/roster',
+		url: IP + '/roster',
 		data: {'team_name':teamNameInput},
 		dataType: 'json',
 		success: function (data) {
@@ -357,7 +362,7 @@ function getDivisionStandings() {
 	let teamNameInput = document.getElementById("team_name").value;
 	$.ajax({
 		type: 'get',
-		url: 'http://127.0.0.1:5000/teamStandings',
+		url: IP + '/teamStandings',
 		data: {'team_name':teamNameInput},
 		dataType: 'json',
 		success: function (data) {
@@ -394,7 +399,7 @@ function getTeamLeaders() {
 	let teamNameInput = document.getElementById("team_name").value;
 	$.ajax({
 		type: 'get',
-		url: 'http://127.0.0.1:5000/teamLeaders',
+		url: IP + '/teamLeaders',
 		data: {'team_name':teamNameInput},
 		dataType: 'json',
 		success: function (data) {
@@ -408,11 +413,13 @@ function getTeamLeaders() {
 		}
 	});
 }
+
+// CRUD API calls for user favorites
 function createNewUser() {
 	let newUserNameInput = document.getElementById("new_userName").value;
 	$.ajax({
 		type: 'post',
-		url: 'http://127.0.0.1:5000/createUser',
+		url: IP + '/createUser',
 		data: {'new_username':newUserNameInput},
 		dataType: 'json',
 		success: function (data) {
@@ -431,6 +438,7 @@ function createNewUser() {
 		}
 	});
 }
+// set currUser in cache and then get user's favorites if input was a new user
 function setUser() {
 	let userNameInput = document.getElementById("exist_userName").value;
 	let currUser = localStorage.getItem("currUser");
@@ -446,7 +454,7 @@ function getUserFavs() {
 	if (currUser) {
 		$.ajax({
 			type: 'get',
-			url: 'http://127.0.0.1:5000/getUserFavs',
+			url: IP + '/getUserFavs',
 			data: {'username':currUser},
 			dataType: 'json',
 			success: function (data) {
@@ -483,7 +491,7 @@ function insertUserFavs(type) {
 	if (!userNotFound && currUser) {
 		$.ajax({
 			type: 'post',
-			url: 'http://127.0.0.1:5000/insertUserFavs',
+			url: IP + '/insertUserFavs',
 			data: {'fav_name':insertFavInput, 
 				'type':type,
 				'username':currUser},
@@ -515,10 +523,11 @@ function deleteFav(fav) {
 	let currUser = localStorage.getItem("currUser");
 	$.ajax({
 		type: 'post',
-		url: 'http://127.0.0.1:5000/deleteFav',
+		url: IP + '/deleteFav',
 		data: {'username':currUser, 'fav':fav},
 		dataType: 'json',
 		success: function () {
+			// after deleting a favorite, re-fetch user favorites
 			getUserFavs();
 		},
 		error: function (error) {
