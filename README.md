@@ -4,7 +4,8 @@
 ## Team Page <br />
 ![image](https://github.com/justintran12/baseballrefclone/assets/48570497/ae4a3195-a381-4172-b91b-b4ae545f90d4) <br />
 ## Favorites Page <br />
-![image](https://github.com/justintran12/baseballrefclone/assets/48570497/b61a8c98-6a70-433d-8a78-1ae68fb6814a)
+![image](https://github.com/justintran12/baseballrefclone/assets/48570497/30c1b84b-ab79-4447-b213-af25959ed781)
+
 
 
 
