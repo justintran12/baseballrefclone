@@ -11,6 +11,9 @@ db = MongoDB()
 
 # endpoints exposed
 
+# endpoints to get player data:
+# input player name in body data, ex: {'player_name' : 'Ichiro Suzuki'}
+
 # return map with keys: player stat types and the player type (pitcher/hitter), values: stat values
 @app.route('/career', methods = ['GET'])
 def getDataCareer():
@@ -31,10 +34,14 @@ def getDataSeasons():
 		
 	return jsonify(player_stats_map)
 
+# no input body data needed
 # return map with keys: stat type, values: map of leader data (keys: player name, player team, player rank)
 @app.route('/leaders', methods = ['GET'])
 def getDataLeaders():
 	return jsonify(bs.getLeagueLeaders())
+
+# endpoints to get team data:
+# input team name in body data, ex: {'team_name' : 'Seattle Mariners'}
 
 # return map with keys: player name, values: map of the player's statistics for the current season (keys: year, name, position, number, etc.)
 @app.route('/roster', methods = ['GET'])
@@ -63,6 +70,9 @@ def getTeamLeaders():
 
 	return jsonify(team_leaders_map)
 
+# endpoints to get/manipulate user data in database:
+
+# input body example: {'new_username' : 'bob'}
 # if user already exists in database, createUser does not create the new user, return created = false
 @app.route('/createUser', methods = ['POST'])
 def createNewUser():
@@ -71,6 +81,7 @@ def createNewUser():
 
 	return {'created' : 'true'} if resp else {'created' : 'false'}
 
+# input body example: {'username' : 'bob'}
 # getFavs will return None if user does not exist in database
 @app.route('/getUserFavs', methods = ['GET'])
 def getUserFavs():
@@ -86,6 +97,9 @@ def getUserFavs():
 		user_favs['fav_teams'] = user_doc['fav_teams']
 		return jsonify(user_favs)
 
+# input body example for players: {'fav_name' : 'Jarred Kelenic', 'type' : 'player', 'username' : 'bob'}
+#					 for teams:	  {'fav_name' : 'Seattle Mariners', 'type' : 'team', 'username' : 'bob'}
+# inputs with type other than 'player' or 'team' will result in resp = False from insert function, nothing will be inserted into database
 # if favorite already exists in database, insertFav does not insert the favorite, return inserted = false
 @app.route('/insertUserFavs', methods = ['POST'])
 def insertUserFavs():
@@ -97,13 +111,14 @@ def insertUserFavs():
 
 	return {'inserted' : 'true'} if resp else {'inserted' : 'false'}
 
+# input body example: {'fav' : 'Aaron Judge', 'username' : 'bob'}
 @app.route('/deleteFav', methods = ['POST'])
 def deleteFav():
 	fav = request.values.get('fav')
 	username = request.values.get('username')
 
-	db.deleteFav(fav, username)
-	return jsonify(success=True)
+	resp = db.deleteFav(fav, username)
+	return jsonify(success=True) if resp else jsonify(success=False)
 
 if __name__ == '__main__':
    app.run(debug = True)

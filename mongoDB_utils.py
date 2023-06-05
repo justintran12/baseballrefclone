@@ -18,9 +18,16 @@ class MongoDB:
         return False
 
     # assume when insertFav is called, the username exists in the collection. Duplicate favorites will not be added and false is returned. If favorite is successfully added, true is returned.
+    # only insert a favorite player or team, other types are not valid and function will return false without inserting anything
     def insertFav(self, username, fav, favType):
         fav_doc = self.getFavs(username)
-        fav_type = "fav_players" if favType == "player" else "fav_teams"
+        if favType == "player":
+            fav_type = "fav_players"
+        elif favType == 'team':
+            fav_type = "fav_teams"
+        else: 
+            return False
+
         fav_list = fav_doc[fav_type]
         if fav not in fav_list:
             fav_list.append(fav)
@@ -58,8 +65,12 @@ class MongoDB:
         self.favorites.delete_many({})
 
     # delete a favorite team or player, only called when the x button associated with that favorite is clicked, so favorite is guaranteed to be in database
+    # but if calling API from elsewhere, if favorite not in database, returns False and does not update database
     def deleteFav(self, fav, username):
         fav_doc = self.getFavs(username)
+        if fav_doc == None:
+            return False
+
         fav_players = fav_doc["fav_players"]
         fav_teams = fav_doc["fav_teams"]
         filter = { "user" : username}
@@ -67,11 +78,14 @@ class MongoDB:
         if fav in fav_players:
             fav_players.remove(fav)
             new_favs = { "$set": { "fav_players" : fav_players} }
-        else:
+        elif fav in fav_teams:
             fav_teams.remove(fav)
             new_favs = { "$set": { "fav_teams" : fav_teams} }
+        else:
+            return False
 
         self.favorites.update_one(filter, new_favs)
+        return True
 
 #mongo = MongoDB()
 #mongo.clearFavs("justin")
