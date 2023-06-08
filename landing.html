@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Baseball Reference Clone</title>
+<meta charset="UTF-8"> <meta name="description" content="Starting point when website is first launched. Home page when logged out."> <meta name="author" content="Justin Tran"">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="baseballScript.js"></script>
+<link rel="stylesheet" href="mystyle.css">
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+		// on page load run this code, if already logged in go to home logged in page
+		currUser = localStorage.getItem('currUser');
+		if (currUser) {
+            window.location.href = "home.html";
+        }
+	});
+</script>
+<h1>Baseball Reference Clone</h1>
+<ul>
+    <li><a href="landing.html">Home</a></li>
+	<li><a href="baseball.html">Players</a></li>
+	<li><a href="teams.html">Teams</a></li>
+</ul>
+<h1>Home</h1>
+</head>
+<body>
+<div>
+    <p>Welcome, Intro</p>
+</div>
+<div>
+    <p>Get Started</p>
+    <a href="login.html">Login</a>
+    <br>
+    <a href="createAccount.html">Create an Account</a>
+</div>
+<div>
+    <p>Quick Search</p>
+</div>
+</body>
+</html>

@@ -72,14 +72,23 @@ def getTeamLeaders():
 
 # endpoints to get/manipulate user data in database:
 
-# input body example: {'new_username' : 'bob'}
+# input body example: {'new_username' : 'bob', 'new_password': 'bob_rules'}
 # if user already exists in database, createUser does not create the new user, return created = false
 @app.route('/createUser', methods = ['POST'])
 def createNewUser():
 	new_username = request.values.get('new_username')
-	resp = db.createUser(new_username)
+	new_password = request.values.get('new_password')
+	resp = db.createUser(new_username, new_password)
 
 	return {'created' : 'true'} if resp else {'created' : 'false'}
+
+@app.route('/validateUser', methods = ['POST'])
+def validateUser():
+	username = request.values.get('username')
+	password = request.values.get('password')
+	resp = db.validateUser(username, password)
+
+	return {'valid' : 'true'} if resp else {'valid' : 'false'}
 
 # input body example: {'username' : 'bob'}
 # getFavs will return None if user does not exist in database

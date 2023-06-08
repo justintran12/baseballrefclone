@@ -207,6 +207,11 @@ function randGenerator() {
     };
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 }
+// logout by clearing cache and jumping to landing page
+function logout() {
+	localStorage.clear();
+	window.location.href = "landing.html";
+}
 
 // AJAX APi calls to baseball_stats_server backend to get data
 
@@ -417,18 +422,20 @@ function getTeamLeaders() {
 // CRUD API calls for user favorites
 function createNewUser() {
 	let newUserNameInput = document.getElementById("new_userName").value;
+	let newPasswordInput = document.getElementById("new_password").value;
 	$.ajax({
 		type: 'post',
 		url: IP + '/createUser',
-		data: {'new_username':newUserNameInput},
+		data: {'new_username':newUserNameInput, 'new_password':newPasswordInput},
 		dataType: 'json',
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
 			if (map.get("created") == "true") {
-				document.getElementById('createAccountResp').innerHTML = "Successfully created new user: " + newUserNameInput;
+				// set user and go to home logged in page
 				window.localStorage.setItem("currUser", newUserNameInput);
-				getUserFavs();
+				window.location.href = "home.html";
+				document.getElementById('createAccountResp').innerHTML = "Successfully created new user: " + newUserNameInput;
 			} else {
 				document.getElementById('createAccountResp').innerHTML = "Did not create new user: " + newUserNameInput + ", user already exists";
 			}
@@ -448,6 +455,31 @@ function setUser() {
 		window.localStorage.setItem("currUser", userNameInput);
 		getUserFavs();
 	}
+}
+function userLogin() {
+	let userNameInput = document.getElementById("exist_userName").value;
+	let passwordInput = document.getElementById("exist_password").value;
+	$.ajax({
+		type: 'post',
+		url: IP + '/validateUser',
+		data: {'username':userNameInput, 'password':passwordInput},
+		dataType: 'json',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+			if (map.get("valid") == "true") {
+				//set user and go to home logged in page
+				window.localStorage.setItem("currUser", userNameInput);
+				window.location.href = "home.html";
+				document.getElementById('existAccountResp').innerHTML = "Success, logged into user: " + currUser;
+			} else {
+				document.getElementById('existAccountResp').innerHTML = "Incorrect username or password";
+			}
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
 }
 function getUserFavs() {
 	let currUser = localStorage.getItem("currUser");

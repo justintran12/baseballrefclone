@@ -2,31 +2,35 @@
 <html>
 <head>
 <title>Baseball Reference Clone</title>
-<meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
+<meta charset="UTF-8"> <meta name="description" content="Player data page"> <meta name="author" content="Justin Tran">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="baseballScript.js"></script>
 <script>
 	document.addEventListener('DOMContentLoaded',function(){
 		// do not clear currUser field in cache 
-		// on page load run this code, if redirected to this page from favorites page, get data for the favorite player immediately
+		// on page load run this code, if redirected to this page from a favorite link when logged in, get data for the favorite player immediately
+		// if in guest mode, do nothing
 		currUser = localStorage.getItem('currUser');
 		getLeagueLeaders();
 		favRedirected = localStorage.getItem('favRedirect');
 		if(favRedirected){
+			currUser = localStorage.getItem('currUser');
+
 			fav = localStorage.getItem('fav');
 			document.getElementById("player_name").value = fav;
 			setTimeout(getData, 3000); // wait for getLeagueLeaders() to finish, getData() needs leaague leaders data
+			
+			localStorage.clear();
+			localStorage.setItem('currUser', currUser);
 		}
-		localStorage.clear();
-		localStorage.setItem('currUser', currUser);
 	});
 </script>
 <link rel="stylesheet" href="mystyle.css">
 <h1>Baseball Reference Clone</h1>
 <ul>
+    <li><a href="landing.html">Home</a></li>
 	<li><a href="baseball.html">Players</a></li>
 	<li><a href="teams.html">Teams</a></li>
-	<li><a href="favorites.html">Favorites</a></li>
 </ul>
 <body>
 	<div>

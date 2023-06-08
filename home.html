@@ -2,41 +2,30 @@
 <html>
 <head>
 <title>Baseball Reference Clone</title>
-<meta charset="UTF-8"> <meta name="description" content="This field contains information about your page. It is usually around two sentences long."> <meta name="author" content="Conor Sheils">
+<meta charset="UTF-8"> <meta name="description" content="Home page when logged in."> <meta name="author" content="Justin Tran"">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="baseballScript.js"></script>
+<link rel="stylesheet" href="mystyle.css">
 <script>
 	document.addEventListener('DOMContentLoaded',function(){
+        currUser = localStorage.getItem('currUser');
+        console.log(currUser);
 		getUserFavs();
 	});
 </script>
-<link rel="stylesheet" href="mystyle.css">
 <h1>Baseball Reference Clone</h1>
 <ul>
+    <li><a href="landing.html">Home</a></li>
 	<li><a href="baseball.html">Players</a></li>
 	<li><a href="teams.html">Teams</a></li>
-    <li><a href="favorites.html">Favorites</a></li>
 </ul>
-<h1>Favorite Players and Teams</h1>
-</head>
+<h1>Home</h1>
 </head>
 <body>
 <div>
-    <p><b>Create New Account</b></p>
-	<label for="new_userName">Enter a New Username:</label> <br>
-	<input type="text" id="new_userName" name="new_userName"> <br>
-	<button onclick = "createNewUser()" > Submit </button> <br>
-    <p id = createAccountResp> </p>
+<p id = existAccountResp> </p>
+<button onclick = "logout()" >Logout</button> <br>
 </div>
-<br>
-<div>
-    <p><b>Get Existing User Favorites</b></p>
-	<label for="exist_userName">Enter Your Username:</label> <br>
-	<input type="text" id="exist_userName" name="exist_userName"> <br>
-	<button onclick = "setUser()" > Submit </button> <br>
-    <p id = existAccountResp> </p>
-</div>
-<br>
 <p><b>Favorite Players</b></p>
 <div class="vertical-list" id="favPlayers">
 
@@ -46,7 +35,6 @@
 <div class="vertical-list" id="favTeams">
 
 </div>
-<br>
 <div>
     <p><b>Insert Favorite Players</b></p>
     <label for="insert_player">Enter a player:</label> <br>
@@ -60,6 +48,9 @@
 	<input type="text" id="insert_team" name="insert_team"> <br>
 	<button onclick = "insertUserFavs('team')" > Submit </button> <br>
     <p id = insertTeamResp> </p>
+</div>
+<div>
+    <p>Quick Search</p>
 </div>
 </body>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Baseball Reference Clone</title>
+<meta charset="UTF-8"> <meta name="description" content="Create new account page."> <meta name="author" content="Justin Tran"">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="baseballScript.js"></script>
+<link rel="stylesheet" href="mystyle.css">
+<h1>Baseball Reference Clone</h1>
+<ul>
+    <li><a href="landing.html">Home</a></li>
+	<li><a href="baseball.html">Players</a></li>
+	<li><a href="teams.html">Teams</a></li>
+</ul>
+</head>
+<body>
+<div>
+    <p><b>Create New Account</b></p>
+	<label for="new_userName">Enter Your Username:</label> <br>
+	<input type="text" id="new_userName" name="new_userName"> <br>
+    <label for="new_password">Enter Your Password:</label> <br>
+	<input type="text" id="new_password" name="new_password"> <br>
+	<button onclick = "createNewUser()" > Submit </button> <br>
+    <p id = createAccountResp> </p>
+    <p>Already have an account? </p>
+    <a href="login.html">Login</a>
+</div>
+</body>
+</html>

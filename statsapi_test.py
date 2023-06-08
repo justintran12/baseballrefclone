@@ -3,7 +3,7 @@ import statsapi
 
 player_name = 'Paul Sewald'
 id = next(x for x in statsapi.get('sports_players',{'season':2023,'gameType':'W'})['people'] if x['fullName']== player_name)
-print(id['primaryPosition']['type'])
+#print(id['primaryPosition']['type'])
 '''
 stats_seasons_map = {}
 for season_data in statsapi.player_stat_data(id, group="pitching", type="yearByYear", sportId=1)['stats']:
@@ -42,5 +42,6 @@ def getRosterData(team_id):
                 roster_map[player] = player_stats
 
     return roster_map
+
 
 #print(getRosterData(team_id))

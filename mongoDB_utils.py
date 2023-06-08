@@ -1,21 +1,49 @@
 import pymongo
 from pymongo import MongoClient
+import hashlib
 
 class MongoDB:
     def __init__(self):
         client = MongoClient()
         self.db = client["user_favorites"]
         self.favorites = self.db["favorites"]
+        self.salt = "bjt"
 
-    # assume createUser only called when username does not already exist in collection, but just in case do not create a duplicate username document. Return true if created a new user.
-    def createUser(self, username):
+    # assume createUser only called when username does not already exist in collection, but just in case do not create a duplicate username document. Return true if created a new user, false if user already exists.
+    def createUser(self, username, password):
+        # Adding salt at the last of the password
+        dataBase_password = password + self.salt
+        # Encoding the password
+        hashed = hashlib.md5(dataBase_password.encode())
+        encoded_pw = hashed.hexdigest()
+        
         if not self.getFavs(username):
             user_favs = {"user": username,
+                        "password": encoded_pw,
                         "fav_teams": [],
                         "fav_players": []}
             self.favorites.insert_one(user_favs)
             return True
         return False
+
+    # returns false if username does not exist in database or given password is incorrect for the given username, otherwise if correct password for existing username is given return true
+    def validateUser(self, username, password):
+        # Adding salt at the last of the password
+        dataBase_password = password + self.salt
+        # Encoding the password
+        hashed = hashlib.md5(dataBase_password.encode())
+        input_pw = hashed.hexdigest()
+
+        fav_doc = self.getFavs(username)
+
+        if fav_doc:
+            correct_pw = fav_doc["password"]
+            if input_pw == correct_pw:
+                return True
+            else:
+                return False
+        else: 
+            return False
 
     # assume when insertFav is called, the username exists in the collection. Duplicate favorites will not be added and false is returned. If favorite is successfully added, true is returned.
     # only insert a favorite player or team, other types are not valid and function will return false without inserting anything
