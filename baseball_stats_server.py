@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, after_this_request
+from flask import abort, Flask, request, jsonify, after_this_request
 from flask_cors import CORS
 import baseball_stats as bs
 from mongoDB_utils import MongoDB
@@ -10,6 +10,14 @@ CORS(app)
 db = MongoDB()
 
 # endpoints exposed
+@app.route('/quick', methods = ['GET'])
+def quickSearch():
+	quick_input = request.values.get('quick_input')
+	quick_search_res = bs.getQuickSearch(quick_input)
+	if quick_search_res is not None:
+		return jsonify(quick_search_res)
+	else:
+		return jsonify(message='Nothing found'),500
 
 # endpoints to get player data:
 # input player name in body data, ex: {'player_name' : 'Ichiro Suzuki'}

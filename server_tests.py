@@ -44,6 +44,23 @@ class baseballStatsTest(unittest.TestCase):
         self.assertIsNone(bs.playerOrTeam("redsox"))
         self.assertIsNone(bs.playerOrTeam("mar iners"))
         self.assertIsNone(bs.playerOrTeam("Angels Los Angeles"))
+
+    def testGetQuickSearch(self):
+        player_only = bs.getQuickSearch("kelenic")
+        team_only = bs.getQuickSearch("mariners")
+        both = bs.getQuickSearch("sea")
+        nothing = bs.getQuickSearch("dfadfere")
+
+        self.assertIn("player_data", player_only)
+        self.assertNotIn("team_data", player_only)
+
+        self.assertIn("team_data", team_only)
+        self.assertNotIn("player_data", team_only)
+
+        self.assertIn("player_data", both)
+        self.assertIn("team_data", both)
+
+        self.assertIsNone(nothing)
     
     '''
     # takes long time, tests data for all teams

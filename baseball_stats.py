@@ -159,5 +159,30 @@ def playerOrTeam(input_name):
 		return "player"
 	elif len(statsapi.lookup_team(input_name)) == 1:
 		return "team"
+	'''
+	elif len(statsapi.lookup_player(input_name)) > 1:
+		return "multi-players"
+	elif len(statsapi.lookup_team(input_name))  > 1:
+		return "multi-teams"
+	'''
+	else:
+		return None
+
+# lookup_player and lookup_team will return empty list if player/team does not exist. Both methods can also return multiple players/teams that match the input (ie: new york has 2 teams)
+# return None if input is neither an active player or team
+def getQuickSearch(quick_input):
+	player_data = statsapi.lookup_player(quick_input)
+	team_data = statsapi.lookup_team(quick_input)
+	res = {}
+	if len(player_data) >= 1 and len(team_data) >= 1:
+		res['player_data'] = player_data
+		res['team_data'] = team_data
+		return res
+	elif len(player_data) >= 1:
+		res['player_data'] = player_data
+		return res
+	elif len(team_data) >= 1:
+		res['team_data'] = team_data
+		return res
 	else:
 		return None

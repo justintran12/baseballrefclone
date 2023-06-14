@@ -192,10 +192,36 @@ function favToHTML(favList, htmlElement) {
 		document.getElementById(divId).appendChild(buttonNode);
 	}
 }
+function quickSearchToHTML(map) {
+	document.getElementById("searchResults").innerHTML = "";
+	let name = "";
+	
+	for (const key of map.keys()) {
+		if (key == "player_data") {
+			data = map.get("player_data");
+		} else {
+			data = map.get("team_data");
+		}
+		for (let i = 0; i < data.length; i++) {
+			let dataInfo = data[i];
+			if (key == "player_data") {
+				name = dataInfo['fullName'];
+			} else {
+				name = dataInfo['name']
+			}
+			let node = document.createElement('a');
+			node.setAttribute("href", "javascript:;");
+			node.setAttribute("onclick", `goToStats("${name}", "${key}")`);
+			node.appendChild(document.createTextNode(name));
+	
+			document.getElementById("searchResults").appendChild(node);
+		}
+	}
+}
 function goToStats(fav, type) {
 	localStorage.setItem('fav', fav);
 	localStorage.setItem('favRedirect', true);
-	if (type == "favTeams") {
+	if (type == "favTeams" || type == "team_data") {
 		window.location.href = "teams.html";
 	} else {
 		window.location.href = "baseball.html";
@@ -214,6 +240,25 @@ function logout() {
 }
 
 // AJAX APi calls to baseball_stats_server backend to get data
+
+function quickSearch() {
+	var quickSearchInput = document.getElementById("quick_search").value;
+	$.ajax({
+		type: 'get',
+		url: IP + '/quick',
+		data: {'quick_input':quickSearchInput},
+		dataType: 'json',
+		success: function (data) {
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+			quickSearchToHTML(map);
+		},
+		error: function (jqXHR, exception) {
+			document.getElementById("searchResults").innerHTML = "";
+			document.getElementById("searchResp").innerHTML = "No active player or team found matching \"" + quickSearchInput + "\"";
+		}
+	});
+}
 
 // get data for players page
 function getData() {

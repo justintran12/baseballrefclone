@@ -18,7 +18,7 @@
 
 			fav = localStorage.getItem('fav');
 			document.getElementById("player_name").value = fav;
-			setTimeout(getData, 3000); // wait for getLeagueLeaders() to finish, getData() needs leaague leaders data
+			setTimeout(getData, 5000); // wait for getLeagueLeaders() to finish, getData() needs leaague leaders data
 			
 			localStorage.clear();
 			localStorage.setItem('currUser', currUser);
