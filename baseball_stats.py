@@ -159,14 +159,14 @@ def playerOrTeam(input_name):
 		return "player"
 	elif len(statsapi.lookup_team(input_name)) == 1:
 		return "team"
+	else:
+		return None
 	'''
 	elif len(statsapi.lookup_player(input_name)) > 1:
 		return "multi-players"
 	elif len(statsapi.lookup_team(input_name))  > 1:
 		return "multi-teams"
 	'''
-	else:
-		return None
 
 # lookup_player and lookup_team will return empty list if player/team does not exist. Both methods can also return multiple players/teams that match the input (ie: new york has 2 teams)
 # return None if input is neither an active player or team
@@ -186,3 +186,123 @@ def getQuickSearch(quick_input):
 		return res
 	else:
 		return None
+
+# live game functions
+def setupLiveGame(gameID):
+	all_plays = statsapi.get(endpoint = 'game', params = {'gamePk':gameID})['liveData']['plays']['allPlays']
+
+	total_plays = len(all_plays)
+	curr_play_ind = total_plays - 1 # return current play index in all_plays
+	curr_AB_ind = 0					# return current AB event index
+	curr_AB_events = []				# return list of events in current ongoing AB
+	curr_inning_movement = []
+	curr_inning_plays = [] # return list of plays in current ongoing inning
+	all_events = [] 	# return list of all events that occured in game (outs, stolen bases, hits, etc.)
+	bases = [False] * 3 # return [first, second, third]
+	AB = [0] * 3        # return [balls, strikes, outs]
+
+	for play in all_plays:
+		if 'description' in play['result']:
+			all_events.append(play['result']['description'])
+
+	# get the inning's previous play's moevements up to the last inning's play (last innings's play has out number of 3)
+	i = 1
+	while total_plays > 1 and "count" in all_plays[total_plays - i] and all_plays[total_plays - i]['count']['outs'] != 3:
+		if 'description' in all_plays[total_plays - i]['result']:
+			curr_inning_plays.append(all_plays[total_plays - i]['result']['description'])
+		curr_inning_movement.append(all_plays[total_plays- i]['runners'])
+		i += 1
+        
+
+	# if last play resulted in third out, leave base setup as empty for new inning, otherwise setup the bases based on the current inning's movement
+	if total_plays > 0 and "count" in all_plays[total_plays - 1] and all_plays[total_plays - 1]['count'] != 3:
+		setupBases(curr_inning_movement, bases)
+
+	# setup current AB count, and get the current AB event index
+	curr_AB_ind = setupAB(all_plays[total_plays - 1], AB, curr_AB_events)
+
+	# return values in map for easy conversion to JSON
+	res = {}
+	res['curr_play_ind'] = curr_play_ind
+	res['curr_AB_ind'] = curr_AB_ind
+	res['curr_AB_events'] = curr_AB_events
+	res['curr_inning_plays'] = curr_inning_plays
+	res['all_events'] = all_events
+	res['bases'] = bases
+	res['AB'] = AB
+	return res
+
+
+def setupBases(curr_inning_movement, base_status):
+	while(curr_inning_movement):
+		movement = curr_inning_movement.pop()
+
+		# [batter's end base, 1st base runner end base, 2nd end, 3rd end]
+		# null value means no player originated at that base
+		end_movement = [None, None, None, None]
+		for move in movement:
+			origin_base = move['movement']['originBase']
+			end_base = move['movement']['end']
+			is_out = move['movement']['isOut']
+			if origin_base == '1B':
+				if is_out:
+					end_movement[1] = 'out'
+				elif not end_movement[1] or (end_movement[1] and (end_base > end_movement[1])):
+					end_movement[1] = end_base
+			elif origin_base == '2B':
+				if is_out:
+					end_movement[2] = 'out'
+				elif not end_movement[2] or (end_movement[2] and (end_base > end_movement[2])):
+					end_movement[2] = end_base
+			elif origin_base == '3B':
+				if is_out:
+					end_movement[3] = 'out'
+				elif not end_movement[3] or (end_movement[3] and (end_base > end_movement[3])):
+					end_movement[3] = end_base
+			else: # origin base is 'None" meaning the batter's movement
+				if is_out:
+					end_movement[0] = 'out'
+				elif not end_movement[0] or (end_movement[0] and (end_base > end_movement[0])):
+					end_movement[0] = end_base
+
+		# update bases counter-clockwise: update runner on third, then second, first, batter.
+		for i in range(len(end_movement) - 1, -1, -1):
+			if i == 0 and end_movement[i]:
+				updateBases('None', end_movement[i], base_status)
+			elif i == 1 and end_movement[i]:
+				updateBases('1B', end_movement[i], base_status)
+			elif i == 2 and end_movement[i]:
+				updateBases('2B', end_movement[i], base_status)
+			elif i == 3 and end_movement[i]:
+				updateBases('3B', end_movement[i], base_status)
+
+def updateBases(origin_base, end_base, base_status):
+	if end_base == '1B':
+		base_status[0] = True
+	elif end_base == '2B':
+		base_status[1] = True
+	elif end_base == '3B':
+		base_status[2] = True
+                        
+	if origin_base == '1B':
+		base_status[0] = False
+	elif origin_base == '2B':
+		base_status[1] = False
+	elif origin_base == '3B':
+		base_status[2] = False
+
+def setupAB(currPlay, AB_status, curr_AB_events):
+	currEvents = currPlay['playEvents']
+	currAB_events = []
+	for event in currEvents:
+		currAB_events.append(event['details']['description'])
+	curr_AB_events = currAB_events
+
+	if currEvents:
+		currCount = currEvents[len(currEvents) - 1]['count']
+		AB_status[0] = currCount['balls']
+		AB_status[1] = currCount['strikes']
+		AB_status[2] = currCount['outs']
+        
+	curr_AB_ind = len(currEvents)
+	return curr_AB_ind

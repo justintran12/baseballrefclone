@@ -2,6 +2,8 @@ from flask import abort, Flask, request, jsonify, after_this_request
 from flask_cors import CORS
 import baseball_stats as bs
 from mongoDB_utils import MongoDB
+from datetime import date
+import statsapi
 
 app = Flask(__name__)
 CORS(app)
@@ -136,6 +138,23 @@ def deleteFav():
 
 	resp = db.deleteFav(fav, username)
 	return jsonify(success=True) if resp else jsonify(success=False)
+
+# live game endpoints
+# input body example: {'game' : 717602}
+@app.route('/setupLive', methods = ['GET'])
+def setupLive():
+	game = request.values.get('game')
+
+	return jsonify(bs.setupLiveGame(game))
+
+# returns array of game info (game info in python map format)
+@app.route('/getGamesToday', methods = ['GET'])
+def getGamesToday():
+	today = date.today()
+	d3 = today.strftime("%m/%d/20%y")
+	games = statsapi.schedule(start_date= d3, end_date= d3)
+
+	return jsonify(games)
 
 if __name__ == '__main__':
    app.run(debug = True)

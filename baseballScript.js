@@ -218,6 +218,52 @@ function quickSearchToHTML(map) {
 		}
 	}
 }
+function gamesToHTML(games) {
+	for (let i = 0; i < games.length; i++) {
+		let game = games[i];
+		let gameID = game['game_id'];
+		let gameLabel = game['away_name'] + " at " + game['home_name'];
+		let node = document.createElement('a');
+		node.setAttribute("onclick", `liveSetup("${gameID}")`);
+		node.appendChild(document.createTextNode(gameLabel));
+
+		document.getElementById("getGameResults").appendChild(node);
+	}
+}
+function liveGameToHTML(data) {
+	// update bases
+	document.getElementById("first").style.background = "mintcream";
+	document.getElementById("second").style.background = "mintcream";
+	document.getElementById("third").style.background = "mintcream";
+	bases = data['bases'];
+	if (bases[0]) {
+		document.getElementById("first").style.background = "black";
+	}
+	if (bases[1]) {
+		document.getElementById("second").style.background = "black";
+	}
+	if (bases[2]) {
+		document.getElementById("third").style.background = "black";
+	}
+
+	// update count
+	count = data['AB'];
+	document.getElementById("balls").innerHTML = "B: " + count[0];
+	document.getElementById("strikes").innerHTML = "S: " + count[1];
+	document.getElementById("outs").innerHTML = "O: " + count[2];
+
+	// update curreng inning plays
+	document.getElementById("currentInningPlays").innerHTML = "Current Inning Summary:";
+	currInningPlays = data['curr_inning_plays']
+	for (let i = 0; i < currInningPlays.length; i++) {
+		let node = document.createElement('p');
+		node.innerText = currInningPlays[i];
+		document.getElementById("currentInningPlays").appendChild(node);
+	}
+
+
+	console.log(data);
+}
 function goToStats(fav, type) {
 	localStorage.setItem('fav', fav);
 	localStorage.setItem('favRedirect', true);
@@ -611,4 +657,35 @@ function deleteFav(fav) {
 			console.log(`Error ${error}`);
 		}
 	});
+}
+
+// live games functions
+function getGames() {
+	$.ajax({
+		type: 'get',
+		url: IP + '/getGamesToday',
+		success: function (data) {
+			gamesToHTML(data);
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+
+}
+
+function liveSetup(gameID) {
+	$.ajax({
+		type: 'get',
+		url: IP + '/setupLive',
+		data: {'game' : gameID},
+		dataType: 'json',
+		success: function (data) {
+			liveGameToHTML(data);
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+
 }

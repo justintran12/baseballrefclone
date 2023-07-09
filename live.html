@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Baseball Reference Clone</title>
+<meta charset="UTF-8"> <meta name="description" content="Team data page"> <meta name="author" content="Justin Tran">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="baseballScript.js"></script>
+<link rel="stylesheet" href="mystyle.css">
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+        getGames();
+	});
+</script>
+<body>
+	<div class="vertical-list" id="getGameResults">
+		<p> Games</p>
+		<p id = getGamesResp> </p>
+	</div>
+
+	<div id = "main">
+		<div id = "bases">
+			<div class="base" id="second">	
+
+			</div>
+			<div class="base" id="third">
+				
+			</div>
+			<div class="base" id="first">
+				
+			</div>
+			<div class="base" id="home">
+
+			</div>
+		</div>
+
+		<div id = count>
+			<p id = balls> </p>
+			<p id = strikes> </p>
+			<p id = outs> </p>
+		</div>
+
+		<div id = currentInningPlays>
+			
+		</div>
+	</div>
+
+</body>
+
+</head>
+</html>

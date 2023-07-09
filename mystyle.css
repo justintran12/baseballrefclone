@@ -45,6 +45,60 @@ li a:hover:not(#favPlayers, #favTeams) {
   color: red; /* Black text color */
 }
 
+.base {
+  width:50px; 
+  height:50px; 
+  border:1px solid black;
+  background:mintcream; 
+}
+
+#getGameResults {
+  float: left;
+  width: 10%;
+}
+
+#main {
+  float: right;
+  width: 90%;
+}
+
+#bases {
+  margin-top: 100px;
+  margin-left: 100px;
+}
+
+#second {
+  margin-left: 75px;
+  width: 50px;
+}
+
+#third {
+  margin-top: 30px;
+  float: left;
+  width: 50px;
+}
+
+#first {
+  float: left;
+  width: 50px;
+  margin-left: 100px;
+  margin-top: 30px;
+}
+
+#home {
+  clear: left;
+  width: 50px;
+  margin-left: 75px;
+  margin-top: 115px;
+}
+
+#count {
+  margin-left: 100px;
+}
+
+#currentInningPlays {
+  margin-left: 100px;
+}
 #header {
   float: left;
   width: 50%;
