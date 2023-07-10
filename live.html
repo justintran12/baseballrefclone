@@ -9,6 +9,10 @@
 <script>
 	document.addEventListener('DOMContentLoaded',function(){
         getGames();
+		localStorage.setItem('gameID', 0);
+		localStorage.setItem('first', false);
+		localStorage.setItem('second', false);
+		localStorage.setItem('third', false);
 	});
 </script>
 <body>
@@ -31,6 +35,11 @@
 			<div class="base" id="home">
 
 			</div>
+		</div>
+
+		<div id = matchup>
+			<p id = pitcher> </p>
+			<p id = batter> </p>
 		</div>
 
 		<div id = count>

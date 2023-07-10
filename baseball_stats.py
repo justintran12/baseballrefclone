@@ -200,6 +200,9 @@ def setupLiveGame(gameID):
 	all_events = [] 	# return list of all events that occured in game (outs, stolen bases, hits, etc.)
 	bases = [False] * 3 # return [first, second, third]
 	AB = [0] * 3        # return [balls, strikes, outs]
+	last_play_rbi = False # return true if last play resulted in a rbi
+	matchup = {}
+
 
 	for play in all_plays:
 		if 'description' in play['result']:
@@ -212,7 +215,13 @@ def setupLiveGame(gameID):
 			curr_inning_plays.append(all_plays[total_plays - i]['result']['description'])
 		curr_inning_movement.append(all_plays[total_plays- i]['runners'])
 		i += 1
-        
+
+	if 'rbi' in all_plays[total_plays - 1]['result']:
+		if all_plays[total_plays - 1]['result']['rbi'] > 0:
+			last_play_rbi = True
+	
+	if 'matchup' in all_plays[total_plays - 1]:
+		matchup = all_plays[total_plays - 1]['matchup']
 
 	# if last play resulted in third out, leave base setup as empty for new inning, otherwise setup the bases based on the current inning's movement
 	if total_plays > 0 and "count" in all_plays[total_plays - 1] and all_plays[total_plays - 1]['count'] != 3:
@@ -230,6 +239,8 @@ def setupLiveGame(gameID):
 	res['all_events'] = all_events
 	res['bases'] = bases
 	res['AB'] = AB
+	res['last_play_rbi'] = last_play_rbi
+	res['matchup'] = matchup
 	return res
 
 

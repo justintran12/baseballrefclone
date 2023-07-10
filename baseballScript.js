@@ -2,6 +2,8 @@
 var leagueLeaders;
 var userNotFound = true;
 var IP = 'http://127.0.0.1:5000';
+let src = 'https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3';
+let audio = new Audio(src);
 
 // helper functions
 function dataToHTML(map, year, type) {
@@ -219,10 +221,18 @@ function quickSearchToHTML(map) {
 	}
 }
 function gamesToHTML(games) {
+	if (games.length == 0) {
+		let node = document.createElement('p');
+		node.innerText = "No games on today";
+		document.getElementById("getGameResults").appendChild(node);
+	}
 	for (let i = 0; i < games.length; i++) {
 		let game = games[i];
 		let gameID = game['game_id'];
-		let gameLabel = game['away_name'] + " at " + game['home_name'];
+		let gameLabel = game['summary'];
+		if (game['status'] != 'Final') {
+			gameLabel += " (" + game['inning_state'] + " " + game['current_inning'] + ")";
+		} 
 		let node = document.createElement('a');
 		node.setAttribute("onclick", `liveSetup("${gameID}")`);
 		node.appendChild(document.createTextNode(gameLabel));
@@ -231,26 +241,48 @@ function gamesToHTML(games) {
 	}
 }
 function liveGameToHTML(data) {
-	// update bases
-	document.getElementById("first").style.background = "mintcream";
-	document.getElementById("second").style.background = "mintcream";
-	document.getElementById("third").style.background = "mintcream";
-	bases = data['bases'];
-	if (bases[0]) {
-		document.getElementById("first").style.background = "black";
-	}
-	if (bases[1]) {
-		document.getElementById("second").style.background = "black";
-	}
-	if (bases[2]) {
-		document.getElementById("third").style.background = "black";
-	}
-
-	// update count
+	// update count in html
 	count = data['AB'];
 	document.getElementById("balls").innerHTML = "B: " + count[0];
 	document.getElementById("strikes").innerHTML = "S: " + count[1];
 	document.getElementById("outs").innerHTML = "O: " + count[2];
+
+	// update bases if it is not third out. store base status in cache and only update html bases and cache if the base status changes.
+	let oldFirst = localStorage.getItem('first');
+	let oldSecond = localStorage.getItem('second');
+	let oldThird = localStorage.getItem('third');
+	if (count[2] != 3) {
+		bases = data['bases'];
+		if (bases[0] && !oldFirst) {
+			document.getElementById("first").style.background = "black";
+		} else if (!bases[0] && oldFirst) {
+			document.getElementById("first").style.background = "mintcream";
+		}
+		if (bases[1] && !oldSecond) {
+			document.getElementById("second").style.background = "black";
+			audio.play();
+		} else if (!bases[1] && oldSecond) {
+			document.getElementById("first").style.background = "mintcream";
+		}
+		if (bases[2] && !oldThird) {
+			document.getElementById("third").style.background = "black";
+			audio.play();
+		} else if (!bases[2] && oldThird) {
+			document.getElementById("first").style.background = "mintcream";
+		}
+	} else { // reset base status in cache and in html for new inning
+		resetBases();
+	}
+
+	// ping when scoring event occured
+	if (data['last_play_rbi']) {
+		audio.play();
+	}
+
+	// update the current AB matchup
+	let matchup = data['matchup']
+	document.getElementById("pitcher").innerHTML = "Pitcher: " + matchup['pitcher']['fullName'];
+	document.getElementById("batter").innerHTML = "Batter: " + matchup['batter']['fullName'];
 
 	// update curreng inning plays
 	document.getElementById("currentInningPlays").innerHTML = "Current Inning Summary:";
@@ -272,6 +304,14 @@ function goToStats(fav, type) {
 	} else {
 		window.location.href = "baseball.html";
 	}
+}
+function resetBases() {
+	localStorage.setItem('first', false);
+	localStorage.setItem('second', false);
+	localStorage.setItem('third', false);
+	document.getElementById("first").style.background = "mintcream";
+	document.getElementById("second").style.background = "mintcream";
+	document.getElementById("third").style.background = "mintcream";
 }
 function randGenerator() {
     var S4 = function() {
@@ -681,6 +721,12 @@ function liveSetup(gameID) {
 		data: {'game' : gameID},
 		dataType: 'json',
 		success: function (data) {
+			// if selecting a new game, reset the bases and set the game ID to the selected game in the cache
+			let oldGameID = localStorage.getItem('gameID');
+			if (oldGameID != gameID) {
+				localStorage.setItem('gameID', gameID);
+				resetBases();
+			}
 			liveGameToHTML(data);
 		},
 		error: function (error) {
