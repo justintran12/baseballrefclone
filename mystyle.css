@@ -99,6 +99,11 @@ li a:hover:not(#favPlayers, #favTeams) {
 #currentInningPlays {
   margin-left: 100px;
 }
+
+#matchup {
+  margin-left: 100px;
+}
+
 #header {
   float: left;
   width: 50%;

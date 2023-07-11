@@ -2,7 +2,7 @@
 var leagueLeaders;
 var userNotFound = true;
 var IP = 'http://127.0.0.1:5000';
-let src = 'https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3';
+let src = 'notification.mp3';
 let audio = new Audio(src);
 
 // helper functions
@@ -234,7 +234,7 @@ function gamesToHTML(games) {
 			gameLabel += " (" + game['inning_state'] + " " + game['current_inning'] + ")";
 		} 
 		let node = document.createElement('a');
-		node.setAttribute("onclick", `liveSetup("${gameID}")`);
+		node.setAttribute("onclick", `liveGame("${gameID}")`);
 		node.appendChild(document.createTextNode(gameLabel));
 
 		document.getElementById("getGameResults").appendChild(node);
@@ -714,6 +714,22 @@ function getGames() {
 
 }
 
+function liveGame(gameID) {
+	// if selecting a new game, reset the bases and set the game ID to the selected game in the cache
+	let oldGameID = localStorage.getItem('gameID');
+	if (oldGameID != gameID) {
+		localStorage.setItem('gameID', gameID);
+		resetBases();
+		if (localStorage.getItem("currInterval") != null) {
+			let prevInt = localStorage.getItem("currInterval");
+			clearInterval(prevInt);
+		}
+		liveSetup(gameID);
+		let newIntervalId = setInterval(liveSetup, 10000, gameID);
+		localStorage.setItem("currInterval", newIntervalId);
+	}
+}
+
 function liveSetup(gameID) {
 	$.ajax({
 		type: 'get',
@@ -721,12 +737,6 @@ function liveSetup(gameID) {
 		data: {'game' : gameID},
 		dataType: 'json',
 		success: function (data) {
-			// if selecting a new game, reset the bases and set the game ID to the selected game in the cache
-			let oldGameID = localStorage.getItem('gameID');
-			if (oldGameID != gameID) {
-				localStorage.setItem('gameID', gameID);
-				resetBases();
-			}
 			liveGameToHTML(data);
 		},
 		error: function (error) {
