@@ -253,22 +253,28 @@ function liveGameToHTML(data) {
 	let oldThird = localStorage.getItem('third');
 	if (count[2] != 3) {
 		bases = data['bases'];
-		if (bases[0] && !oldFirst) {
+		if (bases[0] && oldFirst == "false") {
 			document.getElementById("first").style.background = "black";
-		} else if (!bases[0] && oldFirst) {
+			localStorage.setItem('first', "true");
+		} else if (!bases[0] && oldFirst == "true") {
 			document.getElementById("first").style.background = "mintcream";
+			localStorage.setItem('first', "false");
 		}
-		if (bases[1] && !oldSecond) {
+		if (bases[1] && oldSecond == "false") {
 			document.getElementById("second").style.background = "black";
+			localStorage.setItem('second', "true");
 			audio.play();
-		} else if (!bases[1] && oldSecond) {
-			document.getElementById("first").style.background = "mintcream";
+		} else if (!bases[1] && oldSecond == "true") {
+			document.getElementById("second").style.background = "mintcream";
+			localStorage.setItem('second', "false");
 		}
-		if (bases[2] && !oldThird) {
+		if (bases[2] && oldThird == "false") {
 			document.getElementById("third").style.background = "black";
+			localStorage.setItem('third', "true");
 			audio.play();
-		} else if (!bases[2] && oldThird) {
-			document.getElementById("first").style.background = "mintcream";
+		} else if (!bases[2] && oldThird == "true") {
+			document.getElementById("third").style.background = "mintcream";
+			localStorage.setItem('third', "false");
 		}
 	} else { // reset base status in cache and in html for new inning
 		resetBases();
