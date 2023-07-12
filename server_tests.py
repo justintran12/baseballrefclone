@@ -7,6 +7,7 @@ class baseballStatsTest(unittest.TestCase):
         self.teams = ["Arizona Diamondbacks", "Atlanta Braves", "Baltimore Orioles", "Boston Red Sox", "Chicago White Sox", "Chicago Cubs", "Cincinnati Reds", "Cleveland Guardians", "Colorado Rockies", "Detroit Tigers", "Houston Astros", "Kansas City Royals",
                 "Los Angeles Angels", "Los Angeles Dodgers", "Miami Marlins", "Milwaukee Brewers", "Minnesota Twins", "New York Yankees", "New York Mets", "Oakland Athletics", "Philadelphia Phillies", "Pittsburgh Pirates" , "San Diego Padres", 
                 "San Francisco Giants", "Seattle Mariners", "St. Louis Cardinals", "Tampa Bay Rays", "Texas Rangers", "Toronto Blue Jays", "Washington Nationals"]
+    
     def testPlayerCareer(self):
         # usual case: get hitting stats for hitters and pitching stats for pitchers
         self.assertIsNotNone(bs.getPlayerCareerStats("Jarred Kelenic", "hitting"))
@@ -61,6 +62,116 @@ class baseballStatsTest(unittest.TestCase):
         self.assertIn("team_data", both)
 
         self.assertIsNone(nothing)
+
+    
+    # test live game functions
+    def testSetupBasesAllOuts(self):
+        curr_inning_movement = [
+        [{
+            "movement": 
+            {
+                "originBase": None,
+                "start": None,
+                "end": None,
+                "outBase": "1B",
+                "isOut": True,
+                "outNumber": 2
+            }
+        }],
+        [{
+            "movement": 
+            {
+                "originBase": None,
+                "start": None,
+                "end": None,
+                "outBase": "1B",
+                "isOut": True,
+                "outNumber": 1
+            }
+        }]
+        ]
+        bases = [False] * 3
+        bs.setupBases(curr_inning_movement, bases)
+        expected = [False] * 3
+        self.assertListEqual(bases, expected)
+
+    def testSetupBases3Singles(self):
+        curr_inning_movement = [
+        [{
+            "movement": 
+            {
+                "originBase": None,
+                "start": None,
+                "end": "1B",
+                "outBase": None,
+                "isOut": False,
+                "outNumber": 0
+            }
+        }],
+        [
+        {
+            "movement": 
+            {
+                "originBase": None,
+                "start": None,
+                "end": "1B",
+                "outBase": None,
+                "isOut": False,
+                "outNumber": 0
+            }
+        },
+        {
+            "movement":            
+            {
+                "originBase": "1B",
+                "start": "1B",
+                "end": "2B",
+                "outBase": None,
+                "isOut": False,
+                "outNumber": 0
+            }
+        }
+        ],
+        [
+        {
+            "movement": 
+            {
+                "originBase": None,
+                "start": None,
+                "end": "1B",
+                "outBase": None,
+                "isOut": False,
+                "outNumber": 0
+            }
+        },
+        {
+            "movement":            
+            {
+                "originBase": "1B",
+                "start": "1B",
+                "end": "2B",
+                "outBase": None,
+                "isOut": False,
+                "outNumber": 0
+            }
+        },
+        {
+            "movement":            
+            {
+                "originBase": "2B",
+                "start": "2B",
+                "end": "3B",
+                "outBase": None,
+                "isOut": False,
+                "outNumber": 0
+            }
+        }
+        ]
+        ]
+        bases = [False] * 3
+        bs.setupBases(curr_inning_movement, bases)
+        expected = [True] * 3
+        self.assertListEqual(bases, expected)
     
     '''
     # takes long time, tests data for all teams
