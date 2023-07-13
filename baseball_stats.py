@@ -227,7 +227,7 @@ def setupLiveGame(gameID):
 	if total_plays > 0 and "count" in all_plays[total_plays - 1] and all_plays[total_plays - 1]['count'] != 3:
 		setupBases(curr_inning_movement, bases)
 
-	# setup current AB count, and get the current AB event index
+	# setup current AB count, plays, and get the current AB event index
 	curr_AB_ind = setupAB(all_plays[total_plays - 1], AB, curr_AB_events)
 
 	# return values in map for easy conversion to JSON
@@ -308,7 +308,11 @@ def setupAB(currPlay, AB_status, curr_AB_events):
 		description = event['details']['description']
 		is_pitch = event['isPitch']
 		if is_pitch:
-			description = description + ": " + event['details']['type']['description'] + " " + str(event['pitchData']['startSpeed']) + " mph"
+			count = event['count']
+			balls = count['balls']
+			strikes = count['strikes']
+			
+			description = "%d - %d %s : %s %0.1f mph" % (balls, strikes, description, event['details']['type']['description'], event['pitchData']['startSpeed'])
 		curr_AB_events.append(description)
 
 	if currEvents:

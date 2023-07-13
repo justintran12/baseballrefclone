@@ -231,7 +231,7 @@ function gamesToHTML(games) {
 		let gameID = game['game_id'];
 		let gameLabel = game['summary'];
 		if (game['status'] != 'Final') {
-			gameLabel += " (" + game['inning_state'] + " " + game['current_inning'] + ")";
+			gameLabel = game['away_name'] + " at " + game['home_name'] + " (live)";
 		} 
 		let node = document.createElement('a');
 		node.setAttribute("onclick", `liveGame("${gameID}")`);
@@ -292,13 +292,21 @@ function liveGameToHTML(data) {
 
 	// update curreng inning plays
 	document.getElementById("currentInningPlays").innerHTML = "Current Inning Summary:";
-	currInningPlays = data['curr_inning_plays']
+	currInningPlays = data['curr_inning_plays'];
 	for (let i = 0; i < currInningPlays.length; i++) {
 		let node = document.createElement('p');
 		node.innerText = currInningPlays[i];
 		document.getElementById("currentInningPlays").appendChild(node);
 	}
 
+	// update current AB events
+	currABEvents = data['curr_AB_events'];
+	document.getElementById("currentAB").innerHTML = "Current AB:";
+	for (let i = currABEvents.length - 1; i >= 0; i--) {
+		let node = document.createElement('p');
+		node.innerText = currABEvents[i];
+		document.getElementById("currentAB").appendChild(node);
+	}
 
 	console.log(data);
 }

@@ -62,12 +62,21 @@ li a:hover:not(#favPlayers, #favTeams) {
   width: 90%;
 }
 
-#bases {
+#currentAB {
+  float:left;
   margin-top: 100px;
   margin-left: 100px;
+  width: 300px;
+}
+#bases {
+  float:left;
+  margin-top: 100px;
+  margin-left: 100px;
+  width: 300px;
 }
 
 #second {
+  clear:left;
   margin-left: 75px;
   width: 50px;
 }
@@ -92,16 +101,17 @@ li a:hover:not(#favPlayers, #favTeams) {
   margin-top: 115px;
 }
 
-#count {
-  margin-left: 100px;
-}
-
 #currentInningPlays {
+  clear:left;
+  float:left;
   margin-left: 100px;
+  width: 300px;
 }
 
-#matchup {
+#AB {
+  float:left;
   margin-left: 100px;
+  width: 300px;
 }
 
 #header {
