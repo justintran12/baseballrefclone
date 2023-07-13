@@ -172,6 +172,50 @@ class baseballStatsTest(unittest.TestCase):
         bs.setupBases(curr_inning_movement, bases)
         expected = [True] * 3
         self.assertListEqual(bases, expected)
+
+    def testSetupAB(self):
+        AB = [0] * 3
+        curr_AB_events = []
+        currPlay = {"playEvents": [
+        {
+            "details": {
+                "description": "Ball",
+                "type": {
+                    "code": "KC",
+                    "description": "Knuckle Curve"
+                }
+            },
+            "count": {
+                "balls": 1,
+                "strikes": 0,
+                "outs": 1
+            },
+            "pitchData": {
+                "startSpeed": 85.6,
+                "endSpeed": 79.3
+            },
+            "isPitch": True
+        }, 
+        {
+            "details": {
+                "description": "Batter Timeout",
+            },
+            "count": {
+                "balls": 1,
+                "strikes": 0,
+                "outs": 1
+            },
+            "isPitch": False   
+        }
+        ]
+        }
+        bs.setupAB(currPlay, AB, curr_AB_events)
+        
+        expected_AB = [1,0,1]
+        expected_AB_events = ["Ball: Knuckle Curve 85.6 mph", "Batter Timeout"]
+        self.assertListEqual(AB, expected_AB)
+        self.assertListEqual(curr_AB_events, expected_AB_events)
+
     
     '''
     # takes long time, tests data for all teams

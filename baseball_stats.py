@@ -304,10 +304,12 @@ def updateBases(origin_base, end_base, base_status):
 
 def setupAB(currPlay, AB_status, curr_AB_events):
 	currEvents = currPlay['playEvents']
-	currAB_events = []
 	for event in currEvents:
-		currAB_events.append(event['details']['description'])
-	curr_AB_events = currAB_events
+		description = event['details']['description']
+		is_pitch = event['isPitch']
+		if is_pitch:
+			description = description + ": " + event['details']['type']['description'] + " " + str(event['pitchData']['startSpeed']) + " mph"
+		curr_AB_events.append(description)
 
 	if currEvents:
 		currCount = currEvents[len(currEvents) - 1]['count']
