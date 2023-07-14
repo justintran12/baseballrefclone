@@ -189,7 +189,8 @@ def getQuickSearch(quick_input):
 
 # live game functions
 def setupLiveGame(gameID):
-	all_plays = statsapi.get(endpoint = 'game', params = {'gamePk':gameID})['liveData']['plays']['allPlays']
+	gameData = statsapi.get(endpoint = 'game', params = {'gamePk':gameID})
+	all_plays = gameData['liveData']['plays']['allPlays']
 
 	total_plays = len(all_plays)
 	curr_play_ind = total_plays - 1 # return current play index in all_plays
@@ -201,7 +202,8 @@ def setupLiveGame(gameID):
 	bases = [False] * 3 # return [first, second, third]
 	AB = [0] * 3        # return [balls, strikes, outs]
 	last_play_rbi = False # return true if last play resulted in a rbi
-	matchup = {}
+	matchup = {} 		# current AB pitcher and batter matchup
+	curr_score = [] 	# return current score from last play, [away team, away score, home team, home score]
 
 
 	for play in all_plays:
@@ -219,6 +221,14 @@ def setupLiveGame(gameID):
 	if 'rbi' in all_plays[total_plays - 1]['result']:
 		if all_plays[total_plays - 1]['result']['rbi'] > 0:
 			last_play_rbi = True
+
+	if 'awayScore' in all_plays[total_plays - 1]['result']:
+		away = gameData['gameData']['teams']['away']['teamName']
+		home = gameData['gameData']['teams']['home']['teamName']
+		away_score = all_plays[total_plays - 1]['result']['awayScore']
+		home_score = all_plays[total_plays - 1]['result']['homeScore']
+
+		curr_score = [away, away_score, home, home_score]
 	
 	if 'matchup' in all_plays[total_plays - 1]:
 		matchup = all_plays[total_plays - 1]['matchup']
@@ -241,6 +251,7 @@ def setupLiveGame(gameID):
 	res['AB'] = AB
 	res['last_play_rbi'] = last_play_rbi
 	res['matchup'] = matchup
+	res['curr_score'] = curr_score
 	return res
 
 

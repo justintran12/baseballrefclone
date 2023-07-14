@@ -62,6 +62,13 @@ li a:hover:not(#favPlayers, #favTeams) {
   width: 90%;
 }
 
+#currentScore {
+  font-size: xx-large;
+  text-align: center;
+  width: 50%;
+  margin-top: 100px;
+}
+
 #currentAB {
   float:left;
   margin-top: 100px;

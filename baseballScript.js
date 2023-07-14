@@ -308,6 +308,13 @@ function liveGameToHTML(data) {
 		document.getElementById("currentAB").appendChild(node);
 	}
 
+	// update current score
+	document.getElementById("currentScore").innerHTML = "";
+	currScore = data['curr_score'];
+	let node = document.createElement('p');
+	node.innerText = currScore[0] + " " + currScore[1] + " at " + currScore[2] + " " + currScore[3];
+	document.getElementById("currentScore").appendChild(node);
+
 	console.log(data);
 }
 function goToStats(fav, type) {
