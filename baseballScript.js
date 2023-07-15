@@ -231,7 +231,7 @@ function gamesToHTML(games) {
 		let gameID = game['game_id'];
 		let gameLabel = game['summary'];
 		if (game['status'] != 'Final') {
-			gameLabel = game['away_name'] + " at " + game['home_name'] + " (live)";
+			gameLabel = game['away_name'] + " at " + game['home_name'] + " (" + game['status'] + ")";
 		} 
 		let node = document.createElement('a');
 		node.setAttribute("onclick", `liveGame("${gameID}")`);
@@ -241,6 +241,21 @@ function gamesToHTML(games) {
 	}
 }
 function liveGameToHTML(data) {
+	let currPlayInd = data['curr_play_ind'];
+	let oldPlayInd = localStorage.getItem('currPlayInd');
+	let rbiPinged = localStorage.getItem('rbiPinged');
+	// ping when scoring event occured
+	if (data['last_play_rbi'] && rbiPinged == "false") {
+		audio.play();
+		localStorage.setItem('rbiPinged', "true");
+	}
+
+	if (currPlayInd != oldPlayInd) {
+		localStorage.setItem('currPlayInd', currPlayInd);
+		localStorage.setItem('rbiPinged', "false");
+	}
+
+
 	// update count in html
 	count = data['AB'];
 	document.getElementById("balls").innerHTML = "B: " + count[0];
@@ -278,11 +293,6 @@ function liveGameToHTML(data) {
 		}
 	} else { // reset base status in cache and in html for new inning
 		resetBases();
-	}
-
-	// ping when scoring event occured
-	if (data['last_play_rbi']) {
-		audio.play();
 	}
 
 	// update the current AB matchup
