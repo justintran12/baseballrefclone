@@ -204,7 +204,10 @@ def setupLiveGame(gameID):
 	runners_scored = [] # return list of runner's ids that scored in current AB
 	matchup = {} 		# current AB pitcher and batter matchup
 	curr_score = [] 	# return current score from last play, [away team, away score, home team, home score]
+	linescore = {}		# return linescore info (runs, hits, errors. LOB for each inning, also has current inning info)
 
+	if 'linescore' in gameData['liveData']:
+		linescore = gameData['liveData']['linescore']
 
 	for play in all_plays:
 		if 'description' in play['result']:
@@ -248,6 +251,7 @@ def setupLiveGame(gameID):
 	res['runners_scored'] = runners_scored
 	res['matchup'] = matchup
 	res['curr_score'] = curr_score
+	res['linescore'] = linescore
 	return res
 
 
@@ -284,7 +288,7 @@ def setupBases(curr_inning_movement, base_status, runners_scored):
 					end_movement[0] = end_base
 
 			# if runner scored in an inning, keep track of that runner that scored
-			if move['details']['rbi']:
+			if move['details']['isScoringEvent']:
 				runners_scored.append(move['details']['runner']['id'])
 
 		# update bases counter-clockwise: update runner on third, then second, first, batter.

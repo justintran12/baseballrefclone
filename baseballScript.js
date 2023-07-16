@@ -328,12 +328,69 @@ function liveGameToHTML(data) {
 
 	// update current score
 	document.getElementById("currentScore").innerHTML = "";
-	currScore = data['curr_score'];
+	let currScore = data['curr_score'];
+	let awayTeam = currScore[0];
+	let homeTeam = currScore[2];
 	let node = document.createElement('p');
-	node.innerText = currScore[0] + " " + currScore[1] + " at " + currScore[2] + " " + currScore[3];
+	node.innerText = awayTeam + " " + currScore[1] + " at " + homeTeam + " " + currScore[3];
 	document.getElementById("currentScore").appendChild(node);
 
+	// update current inning and linescore
+	linescore = data['linescore'];
+	node = document.createElement('p');
+	node.innerText = linescore['inningHalf'] + " " + linescore['currentInning'];
+	document.getElementById("currentScore").appendChild(node);
+
+	linescoreHTMLs = linescoreToHTML(linescore, awayTeam, homeTeam);
+
+	$("#linescoreTable").find("tr:gt(0)").remove();
+	let linescoreTable = document.getElementById('linescoreTable');
+	linescoreTable.innerHTML += linescoreHTMLs[0];
+	linescoreTable.innerHTML += linescoreHTMLs[1];
+
+	linescoreTable.rows[1].cells[10].innerHTML = linescore['teams']['away']['runs'];
+	linescoreTable.rows[1].cells[11].innerHTML = linescore['teams']['away']['hits'];
+	linescoreTable.rows[1].cells[12].innerHTML = linescore['teams']['away']['errors'];
+	linescoreTable.rows[1].cells[13].innerHTML = linescore['teams']['away']['leftOnBase'];
+
+	linescoreTable.rows[2].cells[10].innerHTML = linescore['teams']['home']['runs'];
+	linescoreTable.rows[2].cells[11].innerHTML = linescore['teams']['home']['hits'];
+	linescoreTable.rows[2].cells[12].innerHTML = linescore['teams']['home']['errors'];
+	linescoreTable.rows[2].cells[13].innerHTML = linescore['teams']['home']['leftOnBase'];
+
 	console.log(data);
+}
+function linescoreToHTML(linescore, awayTeam, homeTeam) {
+	let innings = linescore['innings'];
+	let total = linescore['teams'];
+	let linescoreHTMLs = [];
+	let home = `<tr> <td> ${homeTeam} </td>`;
+	let away = `<tr> <td> ${awayTeam} </td>`;
+
+	for (let i = 0; i < innings.length; i++) {
+		if (innings[i]['home']['runs'] == undefined) {
+			homeRuns = "-";
+		} else {
+			homeRuns = innings[i]['home']['runs'];
+		}
+		if (innings[i]['away']['runs'] == undefined) {
+			awayRuns = "-";
+		} else {
+			awayRuns = innings[i]['away']['runs'];
+		}
+		home += `<td> ${homeRuns} </td>`;
+		away += `<td> ${awayRuns} </td>`;
+	}
+
+	for (let i = innings.length; i < 13; i++) {
+		home += `<td> ${"-"} </td>`;
+		away += `<td> ${"-"} </td>`;
+	}
+
+	linescoreHTMLs[0] = away;
+	linescoreHTMLs[1] = home;
+
+	return linescoreHTMLs;
 }
 function goToStats(fav, type) {
 	localStorage.setItem('fav', fav);

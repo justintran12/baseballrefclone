@@ -69,7 +69,12 @@ li a:hover:not(#favPlayers, #favTeams) {
   margin-top: 100px;
 }
 
+#linescore {
+  margin-left: 100px;
+}
+
 #currentAB {
+  clear:left;
   float:left;
   margin-top: 100px;
   margin-left: 100px;
