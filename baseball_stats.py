@@ -201,7 +201,7 @@ def setupLiveGame(gameID):
 	all_events = [] 	# return list of all events that occured in game (outs, stolen bases, hits, etc.)
 	bases = [False] * 3 # return [first, second, third]
 	AB = [0] * 3        # return [balls, strikes, outs]
-	last_play_rbi = False # return true if last play resulted in a rbi
+	runners_scored = [] # return list of runner's ids that scored in current AB
 	matchup = {} 		# current AB pitcher and batter matchup
 	curr_score = [] 	# return current score from last play, [away team, away score, home team, home score]
 
@@ -218,10 +218,6 @@ def setupLiveGame(gameID):
 		curr_inning_movement.append(all_plays[total_plays- i]['runners'])
 		i += 1
 
-	if 'rbi' in all_plays[total_plays - 1]['result']:
-		if all_plays[total_plays - 1]['result']['rbi'] > 0:
-			last_play_rbi = True
-
 	if 'awayScore' in all_plays[total_plays - 1]['result']:
 		away = gameData['gameData']['teams']['away']['teamName']
 		home = gameData['gameData']['teams']['home']['teamName']
@@ -235,7 +231,7 @@ def setupLiveGame(gameID):
 
 	# if last play resulted in third out, leave base setup as empty for new inning, otherwise setup the bases based on the current inning's movement
 	if total_plays > 0 and "count" in all_plays[total_plays - 1] and all_plays[total_plays - 1]['count'] != 3:
-		setupBases(curr_inning_movement, bases)
+		setupBases(curr_inning_movement, bases, runners_scored)
 
 	# setup current AB count, plays, and get the current AB event index
 	curr_AB_ind = setupAB(all_plays[total_plays - 1], AB, curr_AB_events)
@@ -249,13 +245,13 @@ def setupLiveGame(gameID):
 	res['all_events'] = all_events
 	res['bases'] = bases
 	res['AB'] = AB
-	res['last_play_rbi'] = last_play_rbi
+	res['runners_scored'] = runners_scored
 	res['matchup'] = matchup
 	res['curr_score'] = curr_score
 	return res
 
 
-def setupBases(curr_inning_movement, base_status):
+def setupBases(curr_inning_movement, base_status, runners_scored):
 	while(curr_inning_movement):
 		movement = curr_inning_movement.pop()
 
@@ -286,6 +282,10 @@ def setupBases(curr_inning_movement, base_status):
 					end_movement[0] = 'out'
 				elif not end_movement[0] or (end_movement[0] and (end_base > end_movement[0])):
 					end_movement[0] = end_base
+
+			# if runner scored in an inning, keep track of that runner that scored
+			if move['details']['rbi']:
+				runners_scored.append(move['details']['runner']['id'])
 
 		# update bases counter-clockwise: update runner on third, then second, first, batter.
 		for i in range(len(end_movement) - 1, -1, -1):

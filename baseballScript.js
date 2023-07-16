@@ -243,16 +243,24 @@ function gamesToHTML(games) {
 function liveGameToHTML(data) {
 	let currPlayInd = data['curr_play_ind'];
 	let oldPlayInd = localStorage.getItem('currPlayInd');
-	let rbiPinged = localStorage.getItem('rbiPinged');
-	// ping when scoring event occured
-	if (data['last_play_rbi'] && rbiPinged == "false") {
-		audio.play();
-		localStorage.setItem('rbiPinged', "true");
+	let oldRunnersScored = localStorage.getItem("runnersScored");
+	let newRunnersScored = data['runners_scored'];
+	if (oldRunnersScored.length > 0) {
+		oldRunnersScored = JSON.parse(localStorage.getItem("runnersScored"));
+		// ping when a new runner scored in the inning and store newRunnersScored array in browser cache
+		for (let i = 0; i < newRunnersScored.length; i++) {
+			let runnerID = newRunnersScored[i];
+			if (!oldRunnersScored.includes(runnerID)) {
+				audio.play();
+			}
+		}
 	}
+	localStorage.setItem("runnersScored", JSON.stringify(newRunnersScored));
 
+	// if new AB started, reset browser cache's old AB info for new AB
 	if (currPlayInd != oldPlayInd) {
 		localStorage.setItem('currPlayInd', currPlayInd);
-		localStorage.setItem('rbiPinged', "false");
+		localStorage.setItem('runnersScored', "");
 	}
 
 
@@ -746,10 +754,12 @@ function getGames() {
 }
 
 function liveGame(gameID) {
-	// if selecting a new game, reset the bases and set the game ID to the selected game in the cache
+	// if selecting a new game, reset values in cache (the bases, the game ID, current play index, runners scored array)
 	let oldGameID = localStorage.getItem('gameID');
 	if (oldGameID != gameID) {
 		localStorage.setItem('gameID', gameID);
+		localStorage.setItem('currPlayInd', 0);
+		localStorage.setItem('runnersScored', "");
 		resetBases();
 		if (localStorage.getItem("currInterval") != null) {
 			let prevInt = localStorage.getItem("currInterval");
