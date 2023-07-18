@@ -126,6 +126,11 @@ li a:hover:not(#favPlayers, #favTeams) {
   width: 300px;
 }
 
+#allPlays {
+  clear:left;
+  margin-left: 100px;
+}
+
 #header {
   float: left;
   width: 50%;

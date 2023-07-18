@@ -191,6 +191,10 @@ def getQuickSearch(quick_input):
 def setupLiveGame(gameID):
 	gameData = statsapi.get(endpoint = 'game', params = {'gamePk':gameID})
 	all_plays = gameData['liveData']['plays']['allPlays']
+	scoring_plays = gameData['liveData']['plays']['scoringPlays']
+
+	away = gameData['gameData']['teams']['away']['teamName']
+	home = gameData['gameData']['teams']['home']['teamName']
 
 	total_plays = len(all_plays)
 	curr_play_ind = total_plays - 1 # return current play index in all_plays
@@ -198,46 +202,72 @@ def setupLiveGame(gameID):
 	curr_AB_events = []				# return list of events in current ongoing AB
 	curr_inning_movement = []
 	curr_inning_plays = [] # return list of plays in current ongoing inning
-	all_events = [] 	# return list of all events that occured in game (outs, stolen bases, hits, etc.)
+	all_events = {} 	# return map of all events that occured in game (outs, stolen bases, hits, etc.) with key being inning and value being map of events occured in that inning (with key being the half inning, value being array of events in the half-inning)
+	scoring_events = []
 	bases = [False] * 3 # return [first, second, third]
 	AB = [0] * 3        # return [balls, strikes, outs]
 	runners_scored = [] # return list of runner's ids that scored in current AB
 	matchup = {} 		# current AB pitcher and batter matchup
-	curr_score = [] 	# return current score from last play, [away team, away score, home team, home score]
+	curr_score = [away, 0, home, 0] 	# return current score from last play, [away team, away score, home team, home score]
 	linescore = {}		# return linescore info (runs, hits, errors. LOB for each inning, also has current inning info)
 
 	if 'linescore' in gameData['liveData']:
 		linescore = gameData['liveData']['linescore']
 
 	for play in all_plays:
+		inning = play['about']['inning']
+		half_inning = play['about']['halfInning']
 		if 'description' in play['result']:
-			all_events.append(play['result']['description'])
+			descr = play['result']['description']
+			if inning not in all_events:
+				inning_events = {}
+				half_inning_events = []
+				half_inning_events.append(descr)
+				inning_events[half_inning] = half_inning_events
+				all_events[inning] = inning_events
+			elif half_inning not in all_events[inning]:
+				half_inning_events = []
+				half_inning_events.append(descr)
+				all_events[inning][half_inning] = half_inning_events
+			else: # half-inning axists in all_events map
+				half_inning_events = all_events[inning][half_inning]
+				half_inning_events.append(descr)
+
+	for scoring_play_ind in scoring_plays:
+		play = all_plays[int(scoring_play_ind)]
+		descr = play['result']['description']
+		away_score = play['result']['awayScore']
+		home_score = play['result']['homeScore']
+		inning = "%s %d" % (play['about']['halfInning'], play['about']['inning'])
+		full_descr = inning + ": " + descr + " " + str(away_score) + " - " + str(home_score)
+		scoring_events.append(full_descr)
+		
 
 	# get the inning's previous play's moevements up to the last inning's play (last innings's play has out number of 3)
 	i = 1
-	while total_plays > 1 and "count" in all_plays[total_plays - i] and all_plays[total_plays - i]['count']['outs'] != 3:
+	while total_plays > 1 and i <= total_plays and "count" in all_plays[total_plays - i] and all_plays[total_plays - i]['count']['outs'] != 3:
 		if 'description' in all_plays[total_plays - i]['result']:
 			curr_inning_plays.append(all_plays[total_plays - i]['result']['description'])
 		curr_inning_movement.append(all_plays[total_plays- i]['runners'])
 		i += 1
 
-	if 'awayScore' in all_plays[total_plays - 1]['result']:
-		away = gameData['gameData']['teams']['away']['teamName']
-		home = gameData['gameData']['teams']['home']['teamName']
-		away_score = all_plays[total_plays - 1]['result']['awayScore']
-		home_score = all_plays[total_plays - 1]['result']['homeScore']
+	if total_plays > 0:
+		if 'awayScore' in all_plays[total_plays - 1]['result']:
+			away_score = all_plays[total_plays - 1]['result']['awayScore']
+			home_score = all_plays[total_plays - 1]['result']['homeScore']
 
-		curr_score = [away, away_score, home, home_score]
-	
-	if 'matchup' in all_plays[total_plays - 1]:
-		matchup = all_plays[total_plays - 1]['matchup']
+			curr_score[1] = away_score
+			curr_score[3] = home_score
+		
+		if 'matchup' in all_plays[total_plays - 1]:
+			matchup = all_plays[total_plays - 1]['matchup']
 
-	# if last play resulted in third out, leave base setup as empty for new inning, otherwise setup the bases based on the current inning's movement
-	if total_plays > 0 and "count" in all_plays[total_plays - 1] and all_plays[total_plays - 1]['count'] != 3:
-		setupBases(curr_inning_movement, bases, runners_scored)
+		# if last play resulted in third out, leave base setup as empty for new inning, otherwise setup the bases based on the current inning's movement
+		if "count" in all_plays[total_plays - 1] and all_plays[total_plays - 1]['count'] != 3:
+			setupBases(curr_inning_movement, bases, runners_scored)
 
-	# setup current AB count, plays, and get the current AB event index
-	curr_AB_ind = setupAB(all_plays[total_plays - 1], AB, curr_AB_events)
+		# setup current AB count, plays, and get the current AB event index
+		curr_AB_ind = setupAB(all_plays[total_plays - 1], AB, curr_AB_events)
 
 	# return values in map for easy conversion to JSON
 	res = {}
@@ -246,6 +276,7 @@ def setupLiveGame(gameID):
 	res['curr_AB_events'] = curr_AB_events
 	res['curr_inning_plays'] = curr_inning_plays
 	res['all_events'] = all_events
+	res['scoring_events'] = scoring_events
 	res['bases'] = bases
 	res['AB'] = AB
 	res['runners_scored'] = runners_scored

@@ -304,10 +304,11 @@ function liveGameToHTML(data) {
 	}
 
 	// update the current AB matchup
-	let matchup = data['matchup']
-	document.getElementById("pitcher").innerHTML = "Pitcher: " + matchup['pitcher']['fullName'];
-	document.getElementById("batter").innerHTML = "Batter: " + matchup['batter']['fullName'];
-
+	let matchup = data['matchup'];
+	if (matchup.length > 0) {
+		document.getElementById("pitcher").innerHTML = "Pitcher: " + matchup['pitcher']['fullName'];
+		document.getElementById("batter").innerHTML = "Batter: " + matchup['batter']['fullName'];
+	}
 	// update curreng inning plays
 	document.getElementById("currentInningPlays").innerHTML = "Current Inning Summary:";
 	currInningPlays = data['curr_inning_plays'];
@@ -338,36 +339,92 @@ function liveGameToHTML(data) {
 	// update current inning and linescore
 	linescore = data['linescore'];
 	node = document.createElement('p');
-	node.innerText = linescore['inningHalf'] + " " + linescore['currentInning'];
+	if (linescore['currentInning'] == undefined) {
+		node.innerText = "Game Not Started";
+	} else {
+		node.innerText = linescore['inningHalf'] + " " + linescore['currentInning'];
+	}
 	document.getElementById("currentScore").appendChild(node);
 
-	linescoreHTMLs = linescoreToHTML(linescore, awayTeam, homeTeam);
+	let linescoreHTMLs = linescoreToHTML(linescore, awayTeam, homeTeam);
 
 	$("#linescoreTable").find("tr:gt(0)").remove();
 	let linescoreTable = document.getElementById('linescoreTable');
 	linescoreTable.innerHTML += linescoreHTMLs[0];
 	linescoreTable.innerHTML += linescoreHTMLs[1];
 
-	linescoreTable.rows[1].cells[10].innerHTML = linescore['teams']['away']['runs'];
-	linescoreTable.rows[1].cells[11].innerHTML = linescore['teams']['away']['hits'];
-	linescoreTable.rows[1].cells[12].innerHTML = linescore['teams']['away']['errors'];
-	linescoreTable.rows[1].cells[13].innerHTML = linescore['teams']['away']['leftOnBase'];
+	if (linescore['teams']['away']['runs'] != undefined) {
+		linescoreTable.rows[1].cells[10].innerHTML = linescore['teams']['away']['runs'];
+		linescoreTable.rows[1].cells[11].innerHTML = linescore['teams']['away']['hits'];
+		linescoreTable.rows[1].cells[12].innerHTML = linescore['teams']['away']['errors'];
+		linescoreTable.rows[1].cells[13].innerHTML = linescore['teams']['away']['leftOnBase'];
 
-	linescoreTable.rows[2].cells[10].innerHTML = linescore['teams']['home']['runs'];
-	linescoreTable.rows[2].cells[11].innerHTML = linescore['teams']['home']['hits'];
-	linescoreTable.rows[2].cells[12].innerHTML = linescore['teams']['home']['errors'];
-	linescoreTable.rows[2].cells[13].innerHTML = linescore['teams']['home']['leftOnBase'];
+		linescoreTable.rows[2].cells[10].innerHTML = linescore['teams']['home']['runs'];
+		linescoreTable.rows[2].cells[11].innerHTML = linescore['teams']['home']['hits'];
+		linescoreTable.rows[2].cells[12].innerHTML = linescore['teams']['home']['errors'];
+		linescoreTable.rows[2].cells[13].innerHTML = linescore['teams']['home']['leftOnBase'];
+	}
+
+	// update all events in game
+	let allEvents = data['all_events'];
+	document.getElementById("allPlays").innerHTML = "All Plays: ";
+	for (var inning in allEvents) {
+		if (allEvents.hasOwnProperty(inning)) {
+			// create new div for top of the inning
+			let inningHalf = "Top " + inning;
+			let topInning = document.createElement('div');
+			topInning.id = inningHalf;
+			let inningHeader = document.createElement('p');
+			inningHeader.innerText = inningHalf;
+			let topInningEvents = allEvents[inning]['top'];
+			if (topInningEvents != undefined) {
+				document.getElementById("allPlays").appendChild(inningHeader);
+				for (let i = 0; i < topInningEvents.length; i++) {
+					let inningEvent = document.createElement('p');
+					inningEvent.innerText = topInningEvents[i];
+					topInning.appendChild(inningEvent);
+				}
+				document.getElementById("allPlays").appendChild(topInning);
+			}
+
+			// create new div for bottom of the inning
+			inningHalf = "Bottom " + inning;
+			let botInning = document.createElement('div');
+			botInning.id = inningHalf;
+			inningHeader = document.createElement('p');
+			inningHeader.innerText = inningHalf;
+			let botInningEvents = allEvents[inning]['bottom'];
+			if (botInningEvents != undefined) {
+				document.getElementById("allPlays").appendChild(inningHeader);
+				for (let i = 0; i < botInningEvents.length; i++) {
+					let inningEvent = document.createElement('p');
+					inningEvent.innerText = botInningEvents[i];
+					botInning.appendChild(inningEvent);
+				}
+				document.getElementById("allPlays").appendChild(botInning);
+			}
+		}
+	}
+
+	// update scoring events in game
+	let scoringEvents = data['scoring_events'];
+	document.getElementById("scoringPlays").innerHTML = "Scoring Plays:";
+	for (let i = 0; i < scoringEvents.length; i++) {
+		let node = document.createElement('p');
+		node.innerText = scoringEvents[i];
+		document.getElementById("scoringPlays").appendChild(node);
+	}
 
 	console.log(data);
 }
 function linescoreToHTML(linescore, awayTeam, homeTeam) {
 	let innings = linescore['innings'];
-	let total = linescore['teams'];
 	let linescoreHTMLs = [];
 	let home = `<tr> <td> ${homeTeam} </td>`;
 	let away = `<tr> <td> ${awayTeam} </td>`;
 
 	for (let i = 0; i < innings.length; i++) {
+		// if inning is ongoing it will be undefined
 		if (innings[i]['home']['runs'] == undefined) {
 			homeRuns = "-";
 		} else {
@@ -382,6 +439,7 @@ function linescoreToHTML(linescore, awayTeam, homeTeam) {
 		away += `<td> ${awayRuns} </td>`;
 	}
 
+	// fill in non-complete innings with filler
 	for (let i = innings.length; i < 13; i++) {
 		home += `<td> ${"-"} </td>`;
 		away += `<td> ${"-"} </td>`;
