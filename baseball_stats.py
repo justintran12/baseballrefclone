@@ -351,17 +351,20 @@ def updateBases(origin_base, end_base, base_status):
 def setupAB(currPlay, AB_status, curr_AB_events):
 	currEvents = currPlay['playEvents']
 	for event in currEvents:
-		description = event['details']['description']
-		is_pitch = event['isPitch']
-		if is_pitch:
-			count = event['count']
-			balls = count['balls']
-			strikes = count['strikes']
-			
-			description = "%d - %d %s : %s %0.1f mph" % (balls, strikes, description, event['details']['type']['description'], event['pitchData']['startSpeed'])
-		curr_AB_events.append(description)
+		# if event is type 'N', there is no description
+		if 'description' in event['details']:
+			description = event['details']['description']
+			is_pitch = event['isPitch']
+			if is_pitch:
+				count = event['count']
+				balls = count['balls']
+				strikes = count['strikes']
+				
+				description = "%d - %d %s : %s %0.1f mph" % (balls, strikes, description, event['details']['type']['description'], event['pitchData']['startSpeed'])
+			curr_AB_events.append(description)
 
-	if currEvents:
+	# if event is type 'N, there is no count
+	if currEvents and 'count' in currEvents[len(currEvents) - 1]['count']:
 		currCount = currEvents[len(currEvents) - 1]['count']
 		AB_status[0] = currCount['balls']
 		AB_status[1] = currCount['strikes']
