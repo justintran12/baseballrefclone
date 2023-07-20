@@ -4,10 +4,15 @@ import statsapi
 
 # returns map of player's career stats: {'gamesPlayed': '206', 'groundOuts': '162', etc.}
 # return None if input incorrect type for player (when input pitcher for a hitter or vice versa)
-# errors out if not given an active player name
+# return None if not given an active player name
 def getPlayerCareerStats(player_name, player_type):
 	curr_season = statsapi.latest_season()['seasonId']
-	id = next(x['id'] for x in statsapi.get('sports_players',{'season':curr_season,'gameType':'W'})['people'] if x['fullName']== player_name)
+	lookup_player_data = statsapi.lookup_player(player_name)
+	if not lookup_player_data:
+		return None
+
+	id = lookup_player_data[0]['id']
+
 	player_stats_str = statsapi.player_stats(id, player_type, 'career')
 	split_str = "Career Hitting" if player_type == "hitting" else "Career Pitching"
 	player_stats_split = player_stats_str.split(split_str)
@@ -28,10 +33,14 @@ def getPlayerCareerStats(player_name, player_type):
 
 # return map of player's stats by season: {'2023': {'gamesPlayed' : '206, 'groundOuts' : '162, etc.}, '2022' : {...}, etc.}
 # returns empty map if input incorrect player type for the player (ex: input pitcher type for a hitter)
-# errors out if not given an active player name
+# return None if not given an active player name
 def getPlayerSeasonStats(player_name, player_type):
 	curr_season = statsapi.latest_season()['seasonId']
-	id = next(x['id'] for x in statsapi.get('sports_players',{'season':curr_season,'gameType':'W'})['people'] if x['fullName']== player_name)
+	lookup_player_data = statsapi.lookup_player(player_name)
+	if not lookup_player_data:
+		return None
+
+	id = lookup_player_data[0]['id']
 
 	#lookup_player function might be buggy, so not using it for now
 	#id = statsapi.lookup_player(player_name)[0]['id']
@@ -121,21 +130,27 @@ def getRosterData(team_id):
 			player_data = player.split()
 			player_name = getRosterPlayerName(player_data)
 			position =  player_data[1]
-			player_id = next(x['id'] for x in statsapi.get('sports_players',{'season':curr_season,'gameType':'W'})['people'] if x['fullName']== player_name)
-			player_type = "pitching" if position == 'P' else "hitting"
-			player_stats_data = statsapi.player_stat_data(player_id, group=player_type, type="season", sportId=1)['stats']
-			# can sometimes have empty player_stats_data returned, in that case do not add that player to roster
-			if len(player_stats_data) > 0:
-				player_stats = player_stats_data[0]['stats']
-				player_stats['year'] = curr_season
-				roster_map[player] = player_stats
+			player_lookup_info = statsapi.lookup_player(player_name)
+			# lookup_player can return empty list for newly called up players
+			if player_lookup_info:
+				player_id = player_lookup_info[0]['id']
+				player_type = "pitching" if position == 'P' else "hitting"
+				player_stats_data = statsapi.player_stat_data(player_id, group=player_type, type="season", sportId=1)['stats']
+				# can sometimes have empty player_stats_data returned, in that case do not add that player to roster
+				if len(player_stats_data) > 0:
+					player_stats = player_stats_data[0]['stats']
+					player_stats['year'] = curr_season
+					roster_map[player] = player_stats
 
 	return roster_map
 
 # helper function to convert team name from string input from user to its corresponding id
 def teamNameToId(team_name):
 	team = statsapi.lookup_team(team_name)
-	team_id = team[0]['id']
+	if team:
+		team_id = team[0]['id']
+	else:
+		team_id = None
 	return team_id
 
 # ex out: {'div_name': 'American League West', 'teams': [{'name': 'Texas Rangers', 'div_rank': '1', ... }, {'name': 'Houston Astros', 'div_rank': '2', ... } ] }
@@ -146,13 +161,15 @@ def getTeamStandingsData(team_id):
 	return div_standings_map
 
 # helper to get player type (hitter or pitcher) of input player
-# errors out if not given active player 
+# return None if not given active player 
 def getPlayerType(player_name):
 	curr_season = statsapi.latest_season()['seasonId']
-	player_info = next(x for x in statsapi.get('sports_players',{'season':curr_season,'gameType':'W'})['people'] if x['fullName']== player_name)
-	player_type = player_info['primaryPosition']['type']
+	player_info = statsapi.lookup_player(player_name)
+	if not player_info:
+		return None
+	player_type = player_info[0]['primaryPosition']['code']
 
-	return "pitching" if player_type == "Pitcher" else "hitting"
+	return "pitching" if player_type == "1" else "hitting"
 
 def playerOrTeam(input_name):
 	if len(statsapi.lookup_player(input_name)) == 1:
@@ -364,7 +381,7 @@ def setupAB(currPlay, AB_status, curr_AB_events):
 			curr_AB_events.append(description)
 
 	# if event is type 'N, there is no count
-	if currEvents and 'count' in currEvents[len(currEvents) - 1]['count']:
+	if currEvents and 'count' in currEvents[len(currEvents) - 1]:
 		currCount = currEvents[len(currEvents) - 1]['count']
 		AB_status[0] = currCount['balls']
 		AB_status[1] = currCount['strikes']

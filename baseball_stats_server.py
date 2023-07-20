@@ -29,20 +29,24 @@ def quickSearch():
 def getDataCareer():
 	player_user_input = request.values.get('player_name')
 	player_user_type = bs.getPlayerType(player_user_input)
-	player_stats_map = bs.getPlayerCareerStats(player_user_input, player_user_type)
-	player_stats_map['type'] = player_user_type
-		
-	return jsonify(player_stats_map)
+	if player_user_type:
+		player_stats_map = bs.getPlayerCareerStats(player_user_input, player_user_type)
+		player_stats_map['type'] = player_user_type
+		return jsonify(player_stats_map)
+	else:
+		return jsonify(message='Nothing found'),500
 	
 # return structure same as getDataCareer()
 @app.route('/seasons', methods = ['GET'])
 def getDataSeasons():
 	player_user_input = request.values.get('player_name')
 	player_user_type = bs.getPlayerType(player_user_input)
-	player_stats_map = bs.getPlayerSeasonStats(player_user_input, player_user_type)
-	player_stats_map['type'] = player_user_type
-		
-	return jsonify(player_stats_map)
+	if player_user_type:
+		player_stats_map = bs.getPlayerSeasonStats(player_user_input, player_user_type)
+		player_stats_map['type'] = player_user_type
+		return jsonify(player_stats_map)
+	else:
+		return jsonify(message='Nothing found'),500
 
 # no input body data needed
 # return map with keys: stat type, values: map of leader data (keys: player name, player team, player rank)
@@ -58,27 +62,33 @@ def getDataLeaders():
 def getTeamRoster():
 	team_name = request.values.get('team_name')
 	team_id = bs.teamNameToId(team_name)
-	roster_map = bs.getRosterData(team_id)
-
-	return jsonify(roster_map)
+	if team_id:
+		roster_map = bs.getRosterData(team_id)
+		return jsonify(roster_map)
+	else:
+		return jsonify(message='Invalid input'),500
 
 # return map with keys: team name, values: map of team stats and division stats (keys: rank, GB, W, L. wc_rank, wc_gb)
 @app.route('/teamStandings', methods = ['GET'])
 def getTeamStandings():
 	team_name = request.values.get('team_name')
 	team_id = bs.teamNameToId(team_name)
-	div_standings_map = bs.getTeamStandingsData(team_id)
-
-	return jsonify(div_standings_map)
+	if team_id:
+		div_standings_map = bs.getTeamStandingsData(team_id)
+		return jsonify(div_standings_map)
+	else:
+		return jsonify(message='Invalid input'),500
 
 # return structure similar to getDataLeaders()
 @app.route('/teamLeaders', methods = ['GET'])
 def getTeamLeaders():
 	team_name = request.values.get('team_name')
 	team_id = bs.teamNameToId(team_name)
-	team_leaders_map = bs.getTeamLeadersData(team_id)
-
-	return jsonify(team_leaders_map)
+	if team_id:
+		team_leaders_map = bs.getTeamLeadersData(team_id)
+		return jsonify(team_leaders_map)
+	else:
+		return jsonify(message='Invalid input'),500
 
 # endpoints to get/manipulate user data in database:
 

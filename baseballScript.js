@@ -531,7 +531,6 @@ function getData() {
 		},
 		error: function (error) {
 			document.getElementById("getDataResponse").innerHTML = "Error player not found, player may be inactive or you misspelled the name";
-			console.log(`Error ${error}`);
 		}
 	});
 	$.ajax({
@@ -562,7 +561,7 @@ function getData() {
 			}
 		},
 		error: function (error) {
-			console.log(`Error ${error}`);
+			document.getElementById("getDataResponse").innerHTML = "Error player not found, player may be inactive or you misspelled the name";
 		}
 	});
 }
@@ -620,6 +619,7 @@ function getTeamData() {
 		data: {'team_name':teamNameInput},
 		dataType: 'json',
 		success: function (data) {
+			document.getElementById("getTeamDataResponse").innerText = "Found team. Displaying Data...";
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
 
@@ -643,7 +643,7 @@ function getTeamData() {
 			}
 		},
 		error: function (error) {
-			console.log(`Error ${error}`);
+			document.getElementById("getTeamDataResponse").innerText = "Could not find your team. Please re-enter an active team. Did not get team data."
 		}
 	});
 }
@@ -656,6 +656,7 @@ function getDivisionStandings() {
 		data: {'team_name':teamNameInput},
 		dataType: 'json',
 		success: function (data) {
+			document.getElementById("getDivisionDataResponse").innerText = "Got division data."
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
 
@@ -667,8 +668,8 @@ function getDivisionStandings() {
 			document.getElementById('divName').innerHTML = divName;
 			for (let i = 0; i < teams.length; i++) {
 				let teamObj = teams[i];
-				team = new Map(Object.entries(teamObj));
-				if (team.get('name') == teamNameInput) {
+				let team = new Map(Object.entries(teamObj));
+				if (team.get('name').toLowerCase().includes(teamNameInput)) {
 					let teamW = team.get('w');
 					let teamL = team.get('l');
 					let teamRecordStr = "Record: " + teamW + "-" + teamL;
@@ -680,7 +681,7 @@ function getDivisionStandings() {
 			}
 		},
 		error: function (error) {
-			console.log(`Error ${error}`);
+			document.getElementById("getDivisionDataResponse").innerText = "Did not get division data."
 		}
 	});
 }
@@ -696,10 +697,11 @@ function getTeamLeaders() {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
 			
+			document.getElementById("getLeadersDataResponse").innerText = "Got team leaders data."
 			document.getElementById('leadersTable').innerHTML += teamLeadersToHTML(map);
 		},
 		error: function (error) {
-			console.log(`Error ${error}`);
+			document.getElementById("getLeadersDataResponse").innerText = "Did not get team leaders data."
 		}
 	});
 }

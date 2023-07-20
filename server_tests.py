@@ -217,7 +217,7 @@ class baseballStatsTest(unittest.TestCase):
         self.assertListEqual(curr_AB_events, expected_AB_events)
 
     
-    '''
+    
     # takes long time, tests data for all teams
     def testTeamLeadersData(self):
         for team_name in self.teams:
@@ -233,7 +233,7 @@ class baseballStatsTest(unittest.TestCase):
         for team_name in self.teams:
             team_id = bs.teamNameToId(team_name)
             self.assertIsNotNone(bs.getRosterData(team_id))
-    '''
+    
 
 
 
