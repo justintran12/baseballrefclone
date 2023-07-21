@@ -514,18 +514,19 @@ function getData() {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
 			const player_type = map.get('type');
-
+			const fullName = map.get('full_name');
+			
 			if (player_type == "hitting") {
-				var playerRanks = checkPositionPlayerRank(playerNameInput);
+				var playerRanks = checkPositionPlayerRank(fullName);
 				statsTable = document.getElementById('statsTable');
 				statsTable.innerHTML += dataToHTML(map, 'Career', 'single');
 			} else {
-				var playerRanks = checkPitcherRank(playerNameInput);
+				var playerRanks = checkPitcherRank(fullName);
 				statsTable = document.getElementById('pitcherStatsTable');
 				statsTable.innerHTML += pitcherDataToHTML(map, 'Career', 'single');
 			}
 
-			document.getElementById("playerRanks").innerHTML = ranksToString(playerRanks, playerNameInput);
+			document.getElementById("playerRanks").innerHTML = ranksToString(playerRanks, fullName);
 			
 			document.getElementById("getDataResponse").innerHTML = "Success, found player!";
 		},

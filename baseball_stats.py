@@ -12,6 +12,7 @@ def getPlayerCareerStats(player_name, player_type):
 		return None
 
 	id = lookup_player_data[0]['id']
+	full_name = lookup_player_data[0]['fullName']
 
 	player_stats_str = statsapi.player_stats(id, player_type, 'career')
 	split_str = "Career Hitting" if player_type == "hitting" else "Career Pitching"
@@ -28,6 +29,8 @@ def getPlayerCareerStats(player_name, player_type):
 		stat_name = stat_arr[0].strip()
 		stat_val = stat_arr[1].strip()
 		player_stats_map[stat_name] = stat_val
+
+	player_stats_map['full_name'] = full_name
 		
 	return player_stats_map
 
