@@ -41,10 +41,14 @@
 <div>
 	<label for="team_name">Enter Team Name:</label> <br>
 	<input type="text" id="team_name" name="team_name"> <br>
-	<button onclick = "getTeamData();getDivisionStandings();getTeamLeaders()" > Search </button> <br>
+	<button onclick = "teamSearch()" > Search </button> <br>
+	<p id = "teamSearchResp"></p>
 	<p id="getTeamDataResponse"></p>
 	<p id="getDivisionDataResponse"></p>
 	<p id="getLeadersDataResponse"></p>
+</div>
+<div class="vertical-list" id = teamSearchResults>
+
 </div>
 <div>
 	<p id = teamRecord></p>

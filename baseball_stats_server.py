@@ -24,6 +24,24 @@ def quickSearch():
 # endpoints to get player data:
 # input player name in body data, ex: {'player_name' : 'Ichiro Suzuki'}
 
+@app.route('/playerSearch', methods = ['GET'])
+def getPlayerSearch():
+	player_user_input = request.values.get('player_name')
+	search_res = bs.getPlayerOrTeamSearch(player_user_input, 'player')
+	if search_res['player_data']:
+		return jsonify(search_res)
+	else:
+		return jsonify(message='Nothing found'),500
+
+@app.route('/teamSearch', methods = ['GET'])
+def getTeamSearch():
+	player_user_input = request.values.get('team_name')
+	search_res = bs.getPlayerOrTeamSearch(player_user_input, 'team')
+	if search_res['team_data']:
+		return jsonify(search_res)
+	else:
+		return jsonify(message='Nothing found'),500
+
 # return map with keys: player stat types and the player type (pitcher/hitter), values: stat values
 @app.route('/career', methods = ['GET'])
 def getDataCareer():

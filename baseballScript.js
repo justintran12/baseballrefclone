@@ -194,8 +194,8 @@ function favToHTML(favList, htmlElement) {
 		document.getElementById(divId).appendChild(buttonNode);
 	}
 }
-function quickSearchToHTML(map) {
-	document.getElementById("searchResults").innerHTML = "";
+function quickSearchToHTML(map, htmlID) {
+	document.getElementById(htmlID).innerHTML = "";
 	let name = "";
 	
 	for (const key of map.keys()) {
@@ -216,7 +216,7 @@ function quickSearchToHTML(map) {
 			node.setAttribute("onclick", `goToStats("${name}", "${key}")`);
 			node.appendChild(document.createTextNode(name));
 	
-			document.getElementById("searchResults").appendChild(node);
+			document.getElementById(htmlID).appendChild(node);
 		}
 	}
 }
@@ -491,7 +491,7 @@ function quickSearch() {
 		success: function (data) {
 			const data2 = JSON.stringify(data);
 			const map = new Map(Object.entries(JSON.parse(data2)));
-			quickSearchToHTML(map);
+			quickSearchToHTML(map, "searchResults");
 		},
 		error: function (jqXHR, exception) {
 			document.getElementById("searchResults").innerHTML = "";
@@ -501,6 +501,25 @@ function quickSearch() {
 }
 
 // get data for players page
+function playerSearch() {
+	var playerNameInput = document.getElementById("player_name").value;
+	$.ajax({
+		type: 'get',
+		url: IP + '/playerSearch',
+		data: {'player_name':playerNameInput},
+		dataType: 'json',
+		success: function (data) {
+			document.getElementById("playerSearchResp").innerHTML = "Found player(s)";
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+			quickSearchToHTML(map, "playerSearchResults");
+		},
+		error: function (jqXHR, exception) {
+			document.getElementById("playerSearchResults").innerHTML = "";
+			document.getElementById("playerSearchResp").innerHTML = "No active player found matching \"" + playerNameInput + "\"";
+		}
+	});
+}
 function getData() {
 	$("#statsTable").find("tr:gt(0)").remove();
 	$("#pitcherStatsTable").find("tr:gt(0)").remove();
@@ -515,7 +534,7 @@ function getData() {
 			const map = new Map(Object.entries(JSON.parse(data2)));
 			const player_type = map.get('type');
 			const fullName = map.get('full_name');
-			
+
 			if (player_type == "hitting") {
 				var playerRanks = checkPositionPlayerRank(fullName);
 				statsTable = document.getElementById('statsTable');
@@ -610,6 +629,25 @@ function getLeagueLeaders() {
 }
 
 // get data for teams page
+function teamSearch() {
+	var teamNameInput = document.getElementById("team_name").value;
+	$.ajax({
+		type: 'get',
+		url: IP + '/teamSearch',
+		data: {'team_name':teamNameInput},
+		dataType: 'json',
+		success: function (data) {
+			document.getElementById("teamSearchResp").innerHTML = "Found team(s)";
+			const data2 = JSON.stringify(data);
+			const map = new Map(Object.entries(JSON.parse(data2)));
+			quickSearchToHTML(map, "teamSearchResults");
+		},
+		error: function (jqXHR, exception) {
+			document.getElementById("teamSearchResults").innerHTML = "";
+			document.getElementById("teamSearchResp").innerHTML = "No active team found matching \"" + teamNameInput + "\"";
+		}
+	});
+}
 function getTeamData() {
 	$("#hittersTable").find("tr:gt(0)").remove();
 	$("#pitchersTable").find("tr:gt(0)").remove();

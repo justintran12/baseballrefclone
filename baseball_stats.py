@@ -207,6 +207,14 @@ def getQuickSearch(quick_input):
 	else:
 		return None
 
+def getPlayerOrTeamSearch(input_name, input_type):
+	data = {}
+	if (input_type == 'player'):
+		data['player_data'] = statsapi.lookup_player(input_name)
+	else:
+		data['team_data'] = statsapi.lookup_team(input_name)
+	return data if data else None
+
 # live game functions
 def setupLiveGame(gameID):
 	gameData = statsapi.get(endpoint = 'game', params = {'gamePk':gameID})
