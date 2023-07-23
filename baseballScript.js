@@ -184,6 +184,7 @@ function favToHTML(favList, htmlElement) {
 		node.setAttribute("onclick", `goToStats("${fav}", "${htmlElement}")`);
 		node.appendChild(document.createTextNode(fav));
 
+		// button to delete favorite
 		let buttonNode = document.createElement("button");
 		buttonNode.innerText = "X";
 		buttonNode.setAttribute("onclick", `deleteFav("${fav}")`);
@@ -206,17 +207,27 @@ function quickSearchToHTML(map, htmlID) {
 		}
 		for (let i = 0; i < data.length; i++) {
 			let dataInfo = data[i];
+			let dataType = "player";
 			if (key == "player_data") {
 				name = dataInfo['fullName'];
 			} else {
-				name = dataInfo['name']
+				name = dataInfo['name'];
+				dataType = "team";
 			}
+
+			// link to go to player or team page with that player/team name
 			let node = document.createElement('a');
 			node.setAttribute("href", "javascript:;");
 			node.setAttribute("onclick", `goToStats("${name}", "${key}")`);
 			node.appendChild(document.createTextNode(name));
-	
+
+			// button to add fav
+			let buttonNode = document.createElement("button");
+			buttonNode.innerText = "Add to Favorites";
+			buttonNode.setAttribute("onclick", `insertUserFavs("${dataType}", "${name}")`);
+
 			document.getElementById(htmlID).appendChild(node);
+			document.getElementById(htmlID).appendChild(buttonNode);
 		}
 	}
 }
@@ -840,17 +851,13 @@ function getUserFavs() {
 		});
 	} 
 }
-function insertUserFavs(type) {
+function insertUserFavs(type, name) {
 	let currUser = localStorage.getItem("currUser");
-	let insertFavInput = document.getElementById("insert_team").value;
-	if (type == 'player') {
-		insertFavInput = document.getElementById("insert_player").value;
-	}
 	if (!userNotFound && currUser) {
 		$.ajax({
 			type: 'post',
 			url: IP + '/insertUserFavs',
-			data: {'fav_name':insertFavInput, 
+			data: {'fav_name':name, 
 				'type':type,
 				'username':currUser},
 			dataType: 'json',
@@ -858,7 +865,7 @@ function insertUserFavs(type) {
 				const data2 = JSON.stringify(data);
 				const map = new Map(Object.entries(JSON.parse(data2)));
 				if (map.get('inserted') == 'true') {
-					favList = [insertFavInput];
+					favList = [name];
 					if (type == 'player') {
 						favToHTML(favList, "favPlayers");
 					} else {
