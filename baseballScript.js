@@ -316,7 +316,7 @@ function liveGameToHTML(data) {
 
 	// update the current AB matchup
 	let matchup = data['matchup'];
-	if (matchup.length > 0) {
+	if (Object.keys(matchup).length > 0) {
 		document.getElementById("pitcher").innerHTML = "Pitcher: " + matchup['pitcher']['fullName'];
 		document.getElementById("batter").innerHTML = "Batter: " + matchup['batter']['fullName'];
 	}

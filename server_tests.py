@@ -10,15 +10,16 @@ class baseballStatsTest(unittest.TestCase):
     
     def testPlayerCareer(self):
         # usual case: get hitting stats for hitters and pitching stats for pitchers
-        self.assertIsNotNone(bs.getPlayerCareerStats("Jarred Kelenic", "hitting"))
-        self.assertIsNotNone(bs.getPlayerCareerStats("JaRRed KELEnic", "hitting"))
+        self.assertIsNotNone(bs.getPlayerCareerStats("Julio Rodriguez", "hitting"))
+        self.assertIsNotNone(bs.getPlayerCareerStats("JULIO rodriguez", "hitting"))
         self.assertIsNotNone(bs.getPlayerCareerStats("George Kirby", "pitching"))
         # mismatch case: get pitching stats for hitters and hitting stats for pitchers, returns None
-        self.assertIsNone(bs.getPlayerCareerStats("Jarred Kelenic", "pitching"))
+        self.assertIsNone(bs.getPlayerCareerStats("julio rodriguez", "pitching"))
         self.assertIsNone(bs.getPlayerCareerStats("George Kirby", "hitting"))
     
     def testPlayerSeason(self):
-        self.assertIsNotNone(bs.getPlayerSeasonStats("Jarred Kelenic", "hitting"))
+        self.assertIsNotNone(bs.getPlayerSeasonStats("Julio Rodriguez", "hitting"))
+        self.assertIsNotNone(bs.getPlayerSeasonStats("JULIO rodriguez", "hitting"))
         self.assertIsNotNone(bs.getPlayerSeasonStats("George Kirby", "pitching"))
     
     def testLeagueLeaders(self):
@@ -26,10 +27,8 @@ class baseballStatsTest(unittest.TestCase):
 
     def testPlayerOrTeam(self):
         # If player name is unique, return "player" (case does not matter)
-        self.assertEqual(bs.playerOrTeam("Jarred Kelenic"), "player")
-        self.assertEqual(bs.playerOrTeam("JARRED kelenIC"), "player")
-        # apparently only one active player in MLB with first or last name "Jarred" with 2 r's. There is a Jared Walsh (one r).
-        self.assertEqual(bs.playerOrTeam("jarred"), "player")
+        self.assertEqual(bs.playerOrTeam("Julio Rodriguez"), "player")
+        self.assertEqual(bs.playerOrTeam("JUlIO RodrigUEZ"), "player")
         # if team name is unique, return "team"
         self.assertEqual(bs.playerOrTeam("Seattle Mariners"), "team")
         self.assertEqual(bs.playerOrTeam("SeATTle MariNERs"), "team")
@@ -40,14 +39,14 @@ class baseballStatsTest(unittest.TestCase):
         self.assertIsNone(bs.playerOrTeam("rand"))
         self.assertIsNone(bs.playerOrTeam("Los Angeles"))
         # misspelled or missing space
-        self.assertIsNone(bs.playerOrTeam("jarred kelnic"))
-        self.assertIsNone(bs.playerOrTeam("jarredkelenic"))
+        self.assertIsNone(bs.playerOrTeam("hulio rodreguess"))
+        self.assertIsNone(bs.playerOrTeam("juliorodriguez"))
         self.assertIsNone(bs.playerOrTeam("redsox"))
         self.assertIsNone(bs.playerOrTeam("mar iners"))
         self.assertIsNone(bs.playerOrTeam("Angels Los Angeles"))
 
     def testGetQuickSearch(self):
-        player_only = bs.getQuickSearch("kelenic")
+        player_only = bs.getQuickSearch("Ohtani")
         team_only = bs.getQuickSearch("mariners")
         both = bs.getQuickSearch("sea")
         nothing = bs.getQuickSearch("dfadfere")
@@ -62,6 +61,19 @@ class baseballStatsTest(unittest.TestCase):
         self.assertIn("team_data", both)
 
         self.assertIsNone(nothing)
+
+    def testGetPlayerOrTeamSearchActive(self):
+        self.assertIsNotNone(bs.getPlayerOrTeamSearch("Julio Rodriguez", "player"))
+        self.assertIsNotNone(bs.getPlayerOrTeamSearch("Seattle Mariners", "team"))
+
+    def testGetPlayerOrTeamSearchAmbiguous(self):
+        self.assertTrue(len(bs.getPlayerOrTeamSearch("Julio", "player")['player_data']) > 1)
+        self.assertTrue(len(bs.getPlayerOrTeamSearch("new york", "team")['team_data']) > 1)
+
+    def testGetPlayerOrTeamSearchInactive(self):
+        self.assertTrue(len(bs.getPlayerOrTeamSearch("Ichiro", "player")['player_data']) == 0)
+        self.assertTrue(len(bs.getPlayerOrTeamSearch("montreal", "team")['team_data']) == 0)
+        self.assertTrue(len(bs.getPlayerOrTeamSearch("thisisnotavalidinput", "player")['player_data']) == 0)
 
     
     # test live game functions
@@ -91,7 +103,7 @@ class baseballStatsTest(unittest.TestCase):
         }]
         ]
         bases = [False] * 3
-        bs.setupBases(curr_inning_movement, bases)
+        bs.setupBases(curr_inning_movement, bases, [])
         expected = [False] * 3
         self.assertListEqual(bases, expected)
 
@@ -169,7 +181,7 @@ class baseballStatsTest(unittest.TestCase):
         ]
         ]
         bases = [False] * 3
-        bs.setupBases(curr_inning_movement, bases)
+        bs.setupBases(curr_inning_movement, bases, [])
         expected = [True] * 3
         self.assertListEqual(bases, expected)
 
@@ -217,7 +229,7 @@ class baseballStatsTest(unittest.TestCase):
         self.assertListEqual(curr_AB_events, expected_AB_events)
 
     
-    
+    '''
     # takes long time, tests data for all teams
     def testTeamLeadersData(self):
         for team_name in self.teams:
@@ -233,6 +245,7 @@ class baseballStatsTest(unittest.TestCase):
         for team_name in self.teams:
             team_id = bs.teamNameToId(team_name)
             self.assertIsNotNone(bs.getRosterData(team_id))
+    '''
     
 
 

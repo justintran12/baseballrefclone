@@ -211,7 +211,7 @@ def getPlayerOrTeamSearch(input_name, input_type):
 	data = {}
 	if (input_type == 'player'):
 		data['player_data'] = statsapi.lookup_player(input_name)
-	else:
+	elif (input_type == 'team'):
 		data['team_data'] = statsapi.lookup_team(input_name)
 	return data if data else None
 
