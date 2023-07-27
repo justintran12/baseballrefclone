@@ -252,6 +252,7 @@ function gamesToHTML(games) {
 	}
 }
 function liveGameToHTML(data) {
+	document.title = "Baseball Reference Plus";
 	let currPlayInd = data['curr_play_ind'];
 	let oldPlayInd = localStorage.getItem('currPlayInd');
 	let oldRunnersScored = localStorage.getItem("runnersScored");
@@ -263,6 +264,7 @@ function liveGameToHTML(data) {
 			let runnerID = newRunnersScored[i];
 			if (!oldRunnersScored.includes(runnerID)) {
 				audio.play();
+				document.title = "Score!";
 			}
 		}
 	}
@@ -298,6 +300,7 @@ function liveGameToHTML(data) {
 			document.getElementById("second").style.background = "black";
 			localStorage.setItem('second', "true");
 			audio.play();
+			document.title = "RISP!";
 		} else if (!bases[1] && oldSecond == "true") {
 			document.getElementById("second").style.background = "mintcream";
 			localStorage.setItem('second', "false");
@@ -306,6 +309,7 @@ function liveGameToHTML(data) {
 			document.getElementById("third").style.background = "black";
 			localStorage.setItem('third', "true");
 			audio.play();
+			document.title = "RISP!";
 		} else if (!bases[2] && oldThird == "true") {
 			document.getElementById("third").style.background = "mintcream";
 			localStorage.setItem('third', "false");
