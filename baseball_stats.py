@@ -269,8 +269,7 @@ def setupLiveGame(gameID):
 		inning = "%s %d" % (play['about']['halfInning'], play['about']['inning'])
 		full_descr = inning + ": " + descr + " " + str(away_score) + " - " + str(home_score)
 		scoring_events.append(full_descr)
-		
-
+			
 	# get the inning's previous play's moevements up to the last inning's play (last innings's play has out number of 3)
 	i = 1
 	while total_plays > 1 and i <= total_plays and "count" in all_plays[total_plays - i] and all_plays[total_plays - i]['count']['outs'] != 3:
@@ -278,6 +277,12 @@ def setupLiveGame(gameID):
 			curr_inning_plays.append(all_plays[total_plays - i]['result']['description'])
 		curr_inning_movement.append(all_plays[total_plays- i]['runners'])
 		i += 1
+
+	# need to manually add the ghsot runner at 2nd at the start of the inning in extras
+	if total_plays > 1 and "count" in all_plays[total_plays - 1] and all_plays[total_plays - 1]['count']['outs'] != 3 and 'currentInning' in linescore and linescore['currentInning'] >= 10:
+		ghost_runner = [{'movement': {'originBase': None, 'start': None, 'end': '2B', 'outBase': None, 'isOut': False, 'outNumber': None}, 
+						'details': {'event': 'Ghost', 'eventType': 'Ghost', 'movementReason': None, 'runner': 'ghost', 'isScoringEvent': False, 'rbi': False}}]
+		curr_inning_movement.append(ghost_runner)
 
 	if total_plays > 0:
 		if 'awayScore' in all_plays[total_plays - 1]['result']:
@@ -317,7 +322,6 @@ def setupLiveGame(gameID):
 def setupBases(curr_inning_movement, base_status, runners_scored):
 	while(curr_inning_movement):
 		movement = curr_inning_movement.pop()
-
 		# [batter's end base, 1st base runner end base, 2nd end, 3rd end]
 		# null value means no player originated at that base
 		end_movement = [None, None, None, None]

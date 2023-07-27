@@ -180,7 +180,7 @@ def setupLive():
 def getGamesToday():
 	today = date.today()
 	d3 = today.strftime("%m/%d/20%y")
-	#d3 = '07/09/2023'
+	#d3 = '07/25/2023'
 	games = statsapi.schedule(start_date= d3, end_date= d3)
 
 	return jsonify(games)
