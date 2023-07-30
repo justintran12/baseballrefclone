@@ -196,8 +196,18 @@ function favToHTML(favList, htmlElement) {
 	}
 }
 function quickSearchToHTML(map, htmlID) {
+	currUser = localStorage.getItem('currUser');
+	console.log(currUser);
 	document.getElementById(htmlID).innerHTML = "";
 	let name = "";
+	let page = "";
+	if (htmlID == "searchResults") {
+		page = "main";
+	} else if (htmlID == "playerSearchResults"){
+		page = "player";
+	} else {
+		page = "team";
+	}
 	
 	for (const key of map.keys()) {
 		if (key == "player_data") {
@@ -220,14 +230,15 @@ function quickSearchToHTML(map, htmlID) {
 			node.setAttribute("href", "javascript:;");
 			node.setAttribute("onclick", `goToStats("${name}", "${key}")`);
 			node.appendChild(document.createTextNode(name));
-
-			// button to add fav
-			let buttonNode = document.createElement("button");
-			buttonNode.innerText = "Add to Favorites";
-			buttonNode.setAttribute("onclick", `insertUserFavs("${dataType}", "${name}")`);
-
 			document.getElementById(htmlID).appendChild(node);
-			document.getElementById(htmlID).appendChild(buttonNode);
+
+			if (currUser != null) {
+				// button to add fav only if user is logged in
+				let buttonNode = document.createElement("button");
+				buttonNode.innerText = "Add to Favorites";
+				buttonNode.setAttribute("onclick", `insertUserFavs("${dataType}", "${name}", "${page}")`);
+				document.getElementById(htmlID).appendChild(buttonNode);
+			}
 		}
 	}
 }
@@ -492,7 +503,23 @@ function randGenerator() {
 }
 // logout by clearing cache and jumping to landing page
 function logout() {
+	// don't clear live game data that is being used on a separate live game page
+	gameId = localStorage.getItem('gameID');
+	first = localStorage.getItem('first');
+	second = localStorage.getItem('second');
+	third = localStorage.getItem('third');
+	currPlayInd = localStorage.getItem('currPlayInd');
+	runnerScored = localStorage.getItem('runnersScored');
+
 	localStorage.clear();
+	
+	localStorage.setItem('gameID', gameId);
+	localStorage.setItem('first', first);
+	localStorage.setItem('second', second);
+	localStorage.setItem('third', third);
+	localStorage.setItem('currPlayInd', currPlayInd);
+	localStorage.setItem('runnersScored', runnerScored);
+
 	window.location.href = "landing.html";
 }
 
@@ -857,9 +884,11 @@ function getUserFavs() {
 		});
 	} 
 }
-function insertUserFavs(type, name) {
+function insertUserFavs(type, name, page) {
 	let currUser = localStorage.getItem("currUser");
-	if (!userNotFound && currUser) {
+	console.log(currUser);
+	console.log(userNotFound);
+	if (currUser) {
 		$.ajax({
 			type: 'post',
 			url: IP + '/insertUserFavs',
@@ -870,16 +899,24 @@ function insertUserFavs(type, name) {
 			success: function (data) {
 				const data2 = JSON.stringify(data);
 				const map = new Map(Object.entries(JSON.parse(data2)));
-				if (map.get('inserted') == 'true') {
-					favList = [name];
-					if (type == 'player') {
-						favToHTML(favList, "favPlayers");
-					} else {
-						favToHTML(favList, "favTeams");
-					}
-					document.getElementById('insertPlayerResp').innerHTML = "Successfully inserted favorite";
+				let htmlRespId = "";
+				if (page == "team") {
+					htmlRespId = "insertTeamResp";
 				} else {
-					document.getElementById('insertPlayerResp').innerHTML = "Favorite not inserted, it already exists in favorites list";
+					htmlRespId = 'insertPlayerResp';
+				}
+				if (map.get('inserted') == 'true') {
+					if (page == "main") {
+						favList = [name];
+						if (type == 'player') {
+							favToHTML(favList, "favPlayers");
+						} else {
+							favToHTML(favList, "favTeams");
+						}
+					}
+					document.getElementById(htmlRespId).innerHTML = "Successfully inserted favorite";
+				} else {
+					document.getElementById(htmlRespId).innerHTML = "Favorite not inserted, it already exists in favorites list";
 				}
 			},
 			error: function (error) {

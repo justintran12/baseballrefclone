@@ -16,12 +16,28 @@
 		if(favRedirected){
 			currUser = localStorage.getItem('currUser');
 
+			// don't clear live game data that is being used on a separate live game page
+			gameId = localStorage.getItem('gameID');
+			first = localStorage.getItem('first');
+			second = localStorage.getItem('second');
+			third = localStorage.getItem('third');
+			currPlayInd = localStorage.getItem('currPlayInd');
+			runnerScored = localStorage.getItem('runnersScored');
+
 			fav = localStorage.getItem('fav');
 			document.getElementById("player_name").value = fav;
 			setTimeout(getData, 5000); // wait for getLeagueLeaders() to finish, getData() needs leaague leaders data
 			
 			localStorage.clear();
-			localStorage.setItem('currUser', currUser);
+			if (currUser != null){
+				localStorage.setItem('currUser', currUser);
+			}
+			localStorage.setItem('gameID', gameId);
+			localStorage.setItem('first', first);
+			localStorage.setItem('second', second);
+			localStorage.setItem('third', third);
+			localStorage.setItem('currPlayInd', currPlayInd);
+			localStorage.setItem('runnersScored', runnerScored);
 		}
 	});
 </script>
@@ -183,6 +199,7 @@
 	<input type="text" id="player_name" name="player_name"> <br>
 	<button onclick = "playerSearch()" > Search </button> <br>
 	<p id = "playerSearchResp"></p>
+	<p id = "insertPlayerResp"> </p>
 </div>
 <div class="vertical-list" id = playerSearchResults>
 

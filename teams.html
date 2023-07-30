@@ -14,6 +14,14 @@
 		if(favRedirected){
 			currUser = localStorage.getItem('currUser');
 
+			// don't clear live game data that is being used on a separate live game page
+			gameId = localStorage.getItem('gameID');
+			first = localStorage.getItem('first');
+			second = localStorage.getItem('second');
+			third = localStorage.getItem('third');
+			currPlayInd = localStorage.getItem('currPlayInd');
+			runnerScored = localStorage.getItem('runnersScored');
+
 			fav = localStorage.getItem('fav');
 			document.getElementById("team_name").value = fav;
 			getTeamData();
@@ -22,7 +30,15 @@
 
 			
 			localStorage.clear();
-			localStorage.setItem('currUser', currUser);
+			if (currUser != null){
+				localStorage.setItem('currUser', currUser);
+			}
+			localStorage.setItem('gameID', gameId);
+			localStorage.setItem('first', first);
+			localStorage.setItem('second', second);
+			localStorage.setItem('third', third);
+			localStorage.setItem('currPlayInd', currPlayInd);
+			localStorage.setItem('runnersScored', runnerScored);
 		}
 	});
 </script>
@@ -43,6 +59,7 @@
 	<input type="text" id="team_name" name="team_name"> <br>
 	<button onclick = "teamSearch()" > Search </button> <br>
 	<p id = "teamSearchResp"></p>
+	<p id = "insertTeamResp"> </p>
 	<p id="getTeamDataResponse"></p>
 	<p id="getDivisionDataResponse"></p>
 	<p id="getLeadersDataResponse"></p>
