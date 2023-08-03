@@ -16,21 +16,18 @@
 Create an account to keep track of your favorite active baseball players and teams! <br />
 Displays season and career stats of active MLB players and displays league leaders for player rankings. <br />
 On teams page, displays input team's 40-man roster and current season stats, team leaders, and division standings. 40-man roster data may take about 10 seconds to load. <br />
+On live page, displays live game data and all games being played on today's date. <br />
 
 # How to Use
 Input active player name or team name and click submit. <br />
 Or create an account and login to save your favorites for quick access. <br />
-Valid name format is first letter of first and last name capitalized with space between first and last name. <br />
-Example Player: Mike Trout <br />
-Example Team: New York Yankees <br />
-<br />
-Inputting misspelled names or inactive players/teams will result in an error. <br />
+Tool not work on players on IL, retired players, and minor-league players. <br />
 <br />
 
 # To run app on your local machine: <br />
 1. Install dependencies: pip install -r requirements.txt <br />
 2. Install MongoDB and start the daemon using this command on linux:  sudo systemctl start mongod <br />
-3. Run python3 baseball_stats_server.py in terminal <br />
+3. Run server/python3 baseball_stats_server.py in terminal <br />
 4. Double-click landing.html to run app in web browser <br />
 
 # Website link: <br />
