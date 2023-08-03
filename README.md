@@ -21,7 +21,7 @@ On live page, displays live game data and all games being played on today's date
 # How to Use
 Input active player name or team name and click submit. <br />
 Or create an account and login to save your favorites for quick access. <br />
-Tool not work on players on IL, retired players, and minor-league players. <br />
+Tool does not work on players on IL, retired players, and minor-league players. <br />
 <br />
 
 # To run app on your local machine: <br />
