@@ -794,7 +794,7 @@ function createNewUser() {
 	let newUserNameInput = document.getElementById("new_userName").value;
 	let newPasswordInput = document.getElementById("new_password").value;
 	$.ajax({
-		type: 'post',
+		type: 'put',
 		url: IP + '/createUser',
 		data: {'new_username':newUserNameInput, 'new_password':newPasswordInput},
 		dataType: 'json',
@@ -830,7 +830,7 @@ function userLogin() {
 	let userNameInput = document.getElementById("exist_userName").value;
 	let passwordInput = document.getElementById("exist_password").value;
 	$.ajax({
-		type: 'post',
+		type: 'get',
 		url: IP + '/validateUser',
 		data: {'username':userNameInput, 'password':passwordInput},
 		dataType: 'json',
@@ -890,7 +890,7 @@ function insertUserFavs(type, name, page) {
 	console.log(userNotFound);
 	if (currUser) {
 		$.ajax({
-			type: 'post',
+			type: 'put',
 			url: IP + '/insertUserFavs',
 			data: {'fav_name':name, 
 				'type':type,
@@ -930,7 +930,7 @@ function insertUserFavs(type, name, page) {
 function deleteFav(fav) {
 	let currUser = localStorage.getItem("currUser");
 	$.ajax({
-		type: 'post',
+		type: 'delete',
 		url: IP + '/deleteFav',
 		data: {'username':currUser, 'fav':fav},
 		dataType: 'json',

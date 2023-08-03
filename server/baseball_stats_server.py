@@ -112,7 +112,7 @@ def getTeamLeaders():
 
 # input body example: {'new_username' : 'bob', 'new_password': 'bob_rules'}
 # if user already exists in database, createUser does not create the new user, return created = false
-@app.route('/createUser', methods = ['POST'])
+@app.route('/createUser', methods = ['PUT'])
 def createNewUser():
 	new_username = request.values.get('new_username')
 	new_password = request.values.get('new_password')
@@ -120,7 +120,7 @@ def createNewUser():
 
 	return {'created' : 'true'} if resp else {'created' : 'false'}
 
-@app.route('/validateUser', methods = ['POST'])
+@app.route('/validateUser', methods = ['GET'])
 def validateUser():
 	username = request.values.get('username')
 	password = request.values.get('password')
@@ -148,7 +148,7 @@ def getUserFavs():
 #					 for teams:	  {'fav_name' : 'Seattle Mariners', 'type' : 'team', 'username' : 'bob'}
 # inputs with type other than 'player' or 'team' will result in resp = False from insert function, nothing will be inserted into database
 # if favorite already exists in database, insertFav does not insert the favorite, return inserted = false
-@app.route('/insertUserFavs', methods = ['POST'])
+@app.route('/insertUserFavs', methods = ['PUT'])
 def insertUserFavs():
 	fav_name = request.values.get('fav_name')
 	fav_type = request.values.get('type')
@@ -159,7 +159,7 @@ def insertUserFavs():
 	return {'inserted' : 'true'} if resp else {'inserted' : 'false'}
 
 # input body example: {'fav' : 'Aaron Judge', 'username' : 'bob'}
-@app.route('/deleteFav', methods = ['POST'])
+@app.route('/deleteFav', methods = ['DELETE'])
 def deleteFav():
 	fav = request.values.get('fav')
 	username = request.values.get('username')

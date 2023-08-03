@@ -88,7 +88,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": "1B",
                 "isOut": True,
                 "outNumber": 2
-            }
+            },
+            "details": {"isScoringEvent":False}
         }],
         [{
             "movement": 
@@ -99,7 +100,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": "1B",
                 "isOut": True,
                 "outNumber": 1
-            }
+            },
+            "details": {"isScoringEvent":False}
         }]
         ]
         bases = [False] * 3
@@ -118,7 +120,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": None,
                 "isOut": False,
                 "outNumber": 0
-            }
+            } ,
+            "details": {"isScoringEvent":False}
         }],
         [
         {
@@ -130,7 +133,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": None,
                 "isOut": False,
                 "outNumber": 0
-            }
+            },
+            "details": {"isScoringEvent":False}
         },
         {
             "movement":            
@@ -141,7 +145,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": None,
                 "isOut": False,
                 "outNumber": 0
-            }
+            },
+            "details": {"isScoringEvent":False}
         }
         ],
         [
@@ -154,7 +159,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": None,
                 "isOut": False,
                 "outNumber": 0
-            }
+            },
+            "details": {"isScoringEvent":False}
         },
         {
             "movement":            
@@ -165,7 +171,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": None,
                 "isOut": False,
                 "outNumber": 0
-            }
+            },
+            "details": {"isScoringEvent":False}
         },
         {
             "movement":            
@@ -176,7 +183,8 @@ class baseballStatsTest(unittest.TestCase):
                 "outBase": None,
                 "isOut": False,
                 "outNumber": 0
-            }
+            },
+            "details": {"isScoringEvent":False}
         }
         ]
         ]
@@ -224,7 +232,7 @@ class baseballStatsTest(unittest.TestCase):
         bs.setupAB(currPlay, AB, curr_AB_events)
         
         expected_AB = [1,0,1]
-        expected_AB_events = ["Ball: Knuckle Curve 85.6 mph", "Batter Timeout"]
+        expected_AB_events = ["1 - 0 Ball : Knuckle Curve 85.6 mph", "Batter Timeout"]
         self.assertListEqual(AB, expected_AB)
         self.assertListEqual(curr_AB_events, expected_AB_events)
 
