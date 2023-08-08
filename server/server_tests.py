@@ -1,6 +1,7 @@
 import unittest
 import baseball_stats as bs
 
+# to run only one test: python3 server/server_tests.py baseballStatsTest.testPlayerCareer
 class baseballStatsTest(unittest.TestCase):
     @classmethod
     def setUpClass(self):
@@ -191,6 +192,29 @@ class baseballStatsTest(unittest.TestCase):
         bases = [False] * 3
         bs.setupBases(curr_inning_movement, bases, [])
         expected = [True] * 3
+        self.assertListEqual(bases, expected)
+
+    def testSetupBasesStolenBaseErrorDouble(self):
+        curr_inning_movement = [
+            [{'movement': {'originBase': '1B', 'start': '1B', 'end': '2B', 'outBase': None, 'isOut': False, 'outNumber': None}, 
+            'details': {'event': 'Stolen Base 2B', 'eventType': 'stolen_base_2b', 'movementReason': 'r_stolen_base_2b', 'runner': {'id': 593160, 'fullName': 'Whit Merrifield', 'link': '/api/v1/people/593160'}, 'responsiblePitcher': None, 'isScoringEvent': False, 'rbi': False, 'earned': False, 'teamUnearned': False, 'playIndex': 1}, 
+            'credits': []}, 
+            {'movement': {'originBase': '1B', 'start': '2B', 'end': '3B', 'outBase': None, 'isOut': False, 'outNumber': None}, 
+            'details': {'event': 'Error', 'eventType': 'error', 'movementReason': 'r_adv_play', 'runner': {'id': 593160, 'fullName': 'Whit Merrifield', 'link': '/api/v1/people/593160'}, 'responsiblePitcher': None, 'isScoringEvent': False, 'rbi': False, 'earned': False, 'teamUnearned': False, 'playIndex': 1}, 
+            'credits': [{'player': {'id': 642136, 'link': '/api/v1/people/642136'}, 'position': {'code': '2', 'name': 'Catcher', 'type': 'Catcher', 'abbreviation': 'C'}, 'credit': 'f_throwing_error'}]}, 
+            {'movement': {'originBase': None, 'start': None, 'end': '2B', 'outBase': None, 'isOut': False, 'outNumber': None}, 
+            'details': {'event': 'Double', 'eventType': 'double', 'movementReason': None, 'runner': {'id': 666182, 'fullName': 'Bo Bichette', 'link': '/api/v1/people/666182'}, 'responsiblePitcher': None, 'isScoringEvent': False, 'rbi': False, 'earned': False, 'teamUnearned': False, 'playIndex': 4}, 
+            'credits': [{'player': {'id': 621493, 'link': '/api/v1/people/621493'}, 'position': {'code': '7', 'name': 'Outfielder', 'type': 'Outfielder', 'abbreviation': 'LF'}, 'credit': 'f_fielded_ball'}]}, 
+            {'movement': {'originBase': '3B', 'start': '3B', 'end': 'score', 'outBase': None, 'isOut': False, 'outNumber': None}, 
+            'details': {'event': 'Double', 'eventType': 'double', 'movementReason': 'r_adv_play', 'runner': {'id': 593160, 'fullName': 'Whit Merrifield', 'link': '/api/v1/people/593160'}, 'responsiblePitcher': {'id': 608337, 'link': '/api/v1/people/608337'}, 'isScoringEvent': True, 'rbi': True, 'earned': True, 'teamUnearned': False, 'playIndex': 4}, 'credits': []}],
+            [{'movement': {'originBase': None, 'start': None, 'end': '1B', 'outBase': None, 'isOut': False, 'outNumber': None}, 
+            'details': {'event': 'Single', 'eventType': 'single', 'movementReason': None, 'runner': {'id': 593160, 'fullName': 'Whit Merrifield', 'link': '/api/v1/people/593160'}, 'responsiblePitcher': None, 'isScoringEvent': False, 'rbi': False, 'earned': False, 'teamUnearned': False, 'playIndex': 3}, 
+            'credits': [{'player': {'id': 621493, 'link': '/api/v1/people/621493'}, 'position': {'code': '7', 'name': 'Outfielder', 'type': 'Outfielder', 'abbreviation': 'LF'}, 'credit': 'f_fielded_ball'}]}]
+        ]
+
+        bases = [False] * 3
+        bs.setupBases(curr_inning_movement, bases, [])
+        expected = [False, True, False]
         self.assertListEqual(bases, expected)
 
     def testSetupAB(self):

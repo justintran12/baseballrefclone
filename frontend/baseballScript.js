@@ -794,7 +794,7 @@ function createNewUser() {
 	let newUserNameInput = document.getElementById("new_userName").value;
 	let newPasswordInput = document.getElementById("new_password").value;
 	$.ajax({
-		type: 'put',
+		type: 'post',
 		url: IP + '/createUser',
 		data: {'new_username':newUserNameInput, 'new_password':newPasswordInput},
 		dataType: 'json',
@@ -890,7 +890,7 @@ function insertUserFavs(type, name, page) {
 	console.log(userNotFound);
 	if (currUser) {
 		$.ajax({
-			type: 'put',
+			type: 'post',
 			url: IP + '/insertUserFavs',
 			data: {'fav_name':name, 
 				'type':type,

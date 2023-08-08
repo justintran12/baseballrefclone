@@ -361,9 +361,25 @@ def setupBases(curr_inning_movement, base_status, runners_scored):
 			elif i == 1 and end_movement[i]:
 				updateBases('1B', end_movement[i], base_status)
 			elif i == 2 and end_movement[i]:
-				updateBases('2B', end_movement[i], base_status)
+				# if there is movement from a runner on 2nd, but current base status has no runner on 2nd
+				# that means in the current AB, a runner moved from 1st to 2nd, so check movement from 1st to see if there is a "2B" there
+				# if there is a "2B" in 1st runner, then change that "2B" to end_movement[2], no need to call updateBases in that case since there isn't actually a runner that originated from 2nd in the AB
+				if base_status[1] == False:
+					if end_movement[1] == '2B':
+						end_movement[1] = end_movement[2]
+				else:
+					updateBases('2B', end_movement[i], base_status)
 			elif i == 3 and end_movement[i]:
-				updateBases('3B', end_movement[i], base_status)
+				# if there is movement from a runner on 3rd, but current base status has no runner on 3rd
+				# that means in the current AB, a runner moved from 1st or 2nd to 3rd, so check movement from 1st and 2nd to see if there is a "3B" there
+				# if there is a "3B" in 1st or 2nd runner, then change that "3B" to end_movement[3], no need to call updateBases in that case since there isn't actually a runner that originated from 3rd in the AB
+				if base_status[2] == False:
+					if end_movement[1] == '3B':
+						end_movement[1] = end_movement[i]
+					elif end_movement[2] == '3B':
+						end_movement[2] = end_movement[i]
+				else:
+					updateBases('3B', end_movement[i], base_status)
 
 def updateBases(origin_base, end_base, base_status):
 	if end_base == '1B':
